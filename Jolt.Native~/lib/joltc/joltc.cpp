@@ -901,6 +901,55 @@ void JPH_DrawSettings_InitDefault(JPH_DrawSettings* settings)
 	settings->drawSoftBodyConstraintColor = JPH_SoftBodyConstraintColor_ConstraintType;
 }
 
+/* JPH_StateRecorder */
+class ManagedStateRecorder final : public JPH::BodyFilter
+{
+public:
+	void* userData = nullptr;
+
+	ManagedStateRecorder(void* userData_)
+		: userData(userData_)
+	{
+
+	}
+
+	//bool ShouldCollide(const BodyID& bodyID) const override
+	//{
+	//	if (s_Procs != nullptr
+	//		&& s_Procs->ShouldCollide)
+	//	{
+	//		return s_Procs->ShouldCollide(userData, (JPH_BodyID)bodyID.GetIndexAndSequenceNumber());
+	//	}
+
+	//	return true;
+	//}
+
+	//bool ShouldCollideLocked(const Body& body) const override
+	//{
+	//	if (s_Procs != nullptr
+	//		&& s_Procs->ShouldCollideLocked)
+	//	{
+	//		return s_Procs->ShouldCollideLocked(userData, reinterpret_cast<const JPH_Body*>(&body));
+	//	}
+
+	//	return true;
+	//}
+};
+
+JPH_StateRecorder* JPH_StateRecorder_Create(void* userData)
+{
+	auto filter = new ManagedStateRecorder(userData);
+	return reinterpret_cast<JPH_StateRecorder*>(filter);
+}
+
+void JPH_StateRecorder_Destroy(JPH_StateRecorder* filter)
+{
+	if (filter)
+	{
+		delete reinterpret_cast<ManagedStateRecorder*>(filter);
+	}
+}
+
 /* State Recorder Filter */
 class ManagedStateRecorderFilter final : public JPH::StateRecorderFilter
 {

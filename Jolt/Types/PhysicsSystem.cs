@@ -41,7 +41,15 @@ namespace Jolt
             JPH_PhysicsSystem_SetBodyActivationListener(Handle, listener.Handle);
         }
 
-        // TODO
+        public void SaveState(StateRecorder stream, EStateRecorderState state, StateRecorderFilter filter)
+        {
+            JPH_PhysicsSystem_SaveState(Handle, stream.Handle, state, filter.Handle);
+        }
+
+        public void RestoreState(StateRecorder stream, StateRecorderFilter filter)
+        {
+            JPH_PhysicsSystem_RestoreState(Handle, stream.Handle, filter.Handle);
+        }
 
         /// <summary>
         /// Update the physics system. Returns true if there were no errors.
