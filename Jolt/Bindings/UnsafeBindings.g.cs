@@ -47,28 +47,6 @@ namespace Jolt
     {
     }
 
-    internal partial struct JPH_LinearCurve
-    {
-    }
-
-    internal partial struct JPH_StateRecorder
-    {
-    }
-
-    internal enum JPH_EStateRecorderState
-    {
-        JPH_EStateRecorderState_None = 0,
-        JPH_EStateRecorderState_Global = 1,
-        JPH_EStateRecorderState_Bodies = 2,
-        JPH_EStateRecorderState_Contacts = 4,
-        JPH_EStateRecorderState_Constraints = 8,
-        JPH_EStateRecorderState_All = JPH_EStateRecorderState_Global | JPH_EStateRecorderState_Bodies | JPH_EStateRecorderState_Contacts | JPH_EStateRecorderState_Constraints,
-    }
-
-    internal partial struct JPH_StateRecorderFilter
-    {
-    }
-
     internal partial struct JPH_ShapeSettings
     {
     }
@@ -273,6 +251,10 @@ namespace Jolt
     {
     }
 
+    internal partial struct JPH_ContactSettings
+    {
+    }
+
     internal partial struct JPH_GroupFilter
     {
     }
@@ -333,38 +315,6 @@ namespace Jolt
         public float distance;
     }
 
-    internal partial struct JPH_Mat4
-    {
-        [NativeTypeName("JPH_Vec4[4]")]
-        public _column_e__FixedBuffer column;
-
-        public partial struct _column_e__FixedBuffer
-        {
-            public float4 e0;
-            public float4 e1;
-            public float4 e2;
-            public float4 e3;
-
-            public unsafe ref float4 this[int index]
-            {
-                get
-                {
-                    fixed (float4* pThis = &e0)
-                    {
-                        return ref pThis[index];
-                    }
-                }
-            }
-        }
-    }
-
-    internal partial struct JPH_Point
-    {
-        public float x;
-
-        public float y;
-    }
-
     internal partial struct JPH_AABox
     {
         [NativeTypeName("JPH_Vec3")]
@@ -414,31 +364,8 @@ namespace Jolt
     {
         public float mass;
 
-        public JPH_Mat4 inertia;
-    }
-
-    internal partial struct JPH_ContactSettings
-    {
-        public float combinedFriction;
-
-        public float combinedRestitution;
-
-        public float invMassScale1;
-
-        public float invInertiaScale1;
-
-        public float invMassScale2;
-
-        public float invInertiaScale2;
-
-        [NativeTypeName("JPH_Bool")]
-        public uint isSensor;
-
-        [NativeTypeName("JPH_Vec3")]
-        public float3 relativeLinearSurfaceVelocity;
-
-        [NativeTypeName("JPH_Vec3")]
-        public float3 relativeAngularSurfaceVelocity;
+        [NativeTypeName("JPH_Matrix4x4")]
+        public float4x4 inertia;
     }
 
     internal partial struct JPH_CollideSettingsBase
@@ -906,18 +833,6 @@ namespace Jolt
     }
 
     internal partial struct JPH_Skeleton
-    {
-    }
-
-    internal partial struct JPH_SkeletonPose
-    {
-    }
-
-    internal partial struct JPH_SkeletalAnimation
-    {
-    }
-
-    internal partial struct JPH_SkeletonMapper
     {
     }
 
@@ -1483,24 +1398,6 @@ namespace Jolt
     {
     }
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal unsafe delegate void JPH_TireMaxImpulseCallback([NativeTypeName("void*")] nint userData, uint wheelIndex, float* outLongitudinalImpulse, float* outLateralImpulse, float suspensionImpulse, float longitudinalFriction, float lateralFriction, float longitudinalSlip, float lateralSlip, float deltaTime);
-
-    internal partial struct JPH_StateRecorderFilter_Procs
-    {
-        [NativeTypeName("bool (*)(void *, const JPH_Body *) __attribute__((cdecl))")]
-        public nint ShouldSaveBody;
-
-        [NativeTypeName("bool (*)(void *, const JPH_Constraint *) __attribute__((cdecl))")]
-        public nint ShouldSaveConstraint;
-
-        [NativeTypeName("bool (*)(void *, const JPH_BodyID, const JPH_BodyID) __attribute__((cdecl))")]
-        public nint ShouldSaveContact;
-
-        [NativeTypeName("bool (*)(void *, const JPH_BodyID, const JPH_BodyID) __attribute__((cdecl))")]
-        public nint ShouldRestoreContact;
-    }
-
     internal unsafe partial struct JPH_PhysicsSystemSettings
     {
         public uint maxBodies;
@@ -1705,10 +1602,10 @@ namespace Jolt
 
     internal partial struct JPH_CharacterVsCharacterCollision_Procs
     {
-        [NativeTypeName("void (*)(void *, const JPH_CharacterVirtual *, const JPH_RMat4 *, const JPH_CollideShapeSettings *, const JPH_RVec3 *) __attribute__((cdecl))")]
+        [NativeTypeName("void (*)(void *, const JPH_CharacterVirtual *, const JPH_RMatrix4x4 *, const JPH_CollideShapeSettings *, const JPH_RVec3 *) __attribute__((cdecl))")]
         public nint CollideCharacter;
 
-        [NativeTypeName("void (*)(void *, const JPH_CharacterVirtual *, const JPH_RMat4 *, const JPH_Vec3 *, const JPH_ShapeCastSettings *, const JPH_RVec3 *) __attribute__((cdecl))")]
+        [NativeTypeName("void (*)(void *, const JPH_CharacterVirtual *, const JPH_RMatrix4x4 *, const JPH_Vec3 *, const JPH_ShapeCastSettings *, const JPH_RVec3 *) __attribute__((cdecl))")]
         public nint CastCharacter;
     }
 
@@ -1756,14 +1653,6 @@ namespace Jolt
     }
 
     internal partial struct JPH_WheelTV
-    {
-    }
-
-    internal partial struct JPH_VehicleEngine
-    {
-    }
-
-    internal partial struct JPH_VehicleTransmission
     {
     }
 
@@ -1856,16 +1745,13 @@ namespace Jolt
         public JPH_VehicleControllerSettings* controller;
     }
 
-    internal unsafe partial struct JPH_VehicleEngineSettings
+    internal partial struct JPH_VehicleEngineSettings
     {
         public float maxTorque;
 
         public float minRPM;
 
         public float maxRPM;
-
-        [NativeTypeName("const JPH_LinearCurve *")]
-        public JPH_LinearCurve* normalizedTorque;
 
         public float inertia;
 
@@ -1885,34 +1771,6 @@ namespace Jolt
         public float limitedSlipRatio;
 
         public float engineTorqueRatio;
-    }
-
-    internal partial struct JPH_VehicleTrack
-    {
-    }
-
-    internal enum JPH_TrackSide
-    {
-        JPH_TrackSide_Left = 0,
-        JPH_TrackSide_Right = 1,
-    }
-
-    internal unsafe partial struct JPH_VehicleTrackSettings
-    {
-        public uint drivenWheel;
-
-        [NativeTypeName("const  *")]
-        public uint* wheels;
-
-        public uint wheelsCount;
-
-        public float inertia;
-
-        public float angularDamping;
-
-        public float maxBrakeTorque;
-
-        public float differentialRatio;
     }
 
     internal static unsafe partial class UnsafeBindings
@@ -2053,7 +1911,7 @@ namespace Jolt
         public static extern void JPH_PhysicsSystem_SetBodyActivationListener(JPH_PhysicsSystem* system, JPH_BodyActivationListener* listener);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_PhysicsSystem_SetSimShapeFilter(JPH_PhysicsSystem* system, [NativeTypeName("const JPH_SimShapeFilter *")] JPH_SimShapeFilter* filter);
+        public static extern void JPH_PhysicsSystem_SetSimShapeFilter(JPH_PhysicsSystem* system, JPH_SimShapeFilter* filter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
@@ -2096,20 +1954,10 @@ namespace Jolt
         public static extern void JPH_PhysicsSystem_RemoveStepListener(JPH_PhysicsSystem* system, JPH_PhysicsStepListener* listener);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_PhysicsSystem_SaveState([NativeTypeName("const JPH_PhysicsSystem *")] JPH_PhysicsSystem* system, JPH_StateRecorder* stream, JPH_EStateRecorderState state, [NativeTypeName("const JPH_StateRecorderFilter *")] JPH_StateRecorderFilter* filter);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_PhysicsSystem_RestoreState(JPH_PhysicsSystem* system, JPH_StateRecorder* stream, [NativeTypeName("const JPH_StateRecorderFilter *")] JPH_StateRecorderFilter* filter);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_PhysicsSystem_GetBodies([NativeTypeName("const JPH_PhysicsSystem *")] JPH_PhysicsSystem* system, [NativeTypeName("JPH_BodyID *")] BodyID* ids, uint count);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_PhysicsSystem_GetConstraints([NativeTypeName("const JPH_PhysicsSystem *")] JPH_PhysicsSystem* system, [NativeTypeName("const JPH_Constraint **")] JPH_Constraint** constraints, uint count);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_PhysicsSystem_ActivateBodiesInAABox(JPH_PhysicsSystem* system, [NativeTypeName("const JPH_AABox *")] JPH_AABox* box, [NativeTypeName("JPH_ObjectLayer")] ObjectLayer layer);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_PhysicsSystem_DrawBodies(JPH_PhysicsSystem* system, [NativeTypeName("const JPH_DrawSettings *")] JPH_DrawSettings* settings, JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_BodyDrawFilter *")] JPH_BodyDrawFilter* bodyFilter);
@@ -2133,13 +1981,7 @@ namespace Jolt
         public static extern void JPH_PhysicsStepListener_Destroy(JPH_PhysicsStepListener* listener);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_Math_Sin(float value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_Math_Cos(float value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Quat_FromTo([NativeTypeName("const JPH_Vec3 *")] float3* from, [NativeTypeName("const JPH_Vec3 *")] float3* to, [NativeTypeName("JPH_Quat *")] quaternion* quat);
+        public static extern void JPH_Quaternion_FromTo([NativeTypeName("const JPH_Vec3 *")] float3* from, [NativeTypeName("const JPH_Vec3 *")] float3* to, [NativeTypeName("JPH_Quat *")] quaternion* quat);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_Quat_GetAxisAngle([NativeTypeName("const JPH_Quat *")] quaternion* quat, [NativeTypeName("JPH_Vec3 *")] float3* outAxis, float* outAngle);
@@ -2208,15 +2050,6 @@ namespace Jolt
         public static extern void JPH_Quat_InverseRotate([NativeTypeName("const JPH_Quat *")] quaternion* quat, [NativeTypeName("const JPH_Vec3 *")] float3* vec, [NativeTypeName("JPH_Vec3 *")] float3* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Vec3_AxisX([NativeTypeName("JPH_Vec3 *")] float3* result);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Vec3_AxisY([NativeTypeName("JPH_Vec3 *")] float3* result);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Vec3_AxisZ([NativeTypeName("JPH_Vec3 *")] float3* result);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern NativeBool JPH_Vec3_IsClose([NativeTypeName("const JPH_Vec3 *")] float3* v1, [NativeTypeName("const JPH_Vec3 *")] float3* v2, float maxDistSq);
 
@@ -2269,70 +2102,88 @@ namespace Jolt
         public static extern void JPH_Vec3_MultiplyScalar([NativeTypeName("const JPH_Vec3 *")] float3* v, float scalar, [NativeTypeName("JPH_Vec3 *")] float3* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Vec3_MultiplyMatrix([NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* left, [NativeTypeName("const JPH_Vec3 *")] float3* right, [NativeTypeName("JPH_Vec3 *")] float3* result);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_Vec3_Divide([NativeTypeName("const JPH_Vec3 *")] float3* v1, [NativeTypeName("const JPH_Vec3 *")] float3* v2, [NativeTypeName("JPH_Vec3 *")] float3* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_Vec3_DivideScalar([NativeTypeName("const JPH_Vec3 *")] float3* v, float scalar, [NativeTypeName("JPH_Vec3 *")] float3* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_Add([NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* m1, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* m2, JPH_Mat4* result);
+        public static extern void JPH_Matrix4x4_Add([NativeTypeName("const JPH_Matrix4x4 *")] float4x4* m1, [NativeTypeName("const JPH_Matrix4x4 *")] float4x4* m2, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_Subtract([NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* m1, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* m2, JPH_Mat4* result);
+        public static extern void JPH_Matrix4x4_Subtract([NativeTypeName("const JPH_Matrix4x4 *")] float4x4* m1, [NativeTypeName("const JPH_Matrix4x4 *")] float4x4* m2, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_Multiply([NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* m1, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* m2, JPH_Mat4* result);
+        public static extern void JPH_Matrix4x4_Multiply([NativeTypeName("const JPH_Matrix4x4 *")] float4x4* m1, [NativeTypeName("const JPH_Matrix4x4 *")] float4x4* m2, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_MultiplyScalar([NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* m, float scalar, JPH_Mat4* result);
+        public static extern void JPH_Matrix4x4_MultiplyScalar([NativeTypeName("const JPH_Matrix4x4 *")] float4x4* m, float scalar, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_Zero(JPH_Mat4* result);
+        public static extern void JPH_Matrix4x4_Zero([NativeTypeName("JPH_Matrix4x4 *")] float4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_Identity(JPH_Mat4* result);
+        public static extern void JPH_Matrix4x4_Identity([NativeTypeName("JPH_Matrix4x4 *")] float4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_Rotation(JPH_Mat4* result, [NativeTypeName("const JPH_Quat *")] quaternion* rotation);
+        public static extern void JPH_Matrix4x4_Rotation([NativeTypeName("JPH_Matrix4x4 *")] float4x4* result, [NativeTypeName("const JPH_Quat *")] quaternion* rotation);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_Rotation2(JPH_Mat4* result, [NativeTypeName("const JPH_Vec3 *")] float3* axis, float angle);
+        public static extern void JPH_Matrix4x4_Translation([NativeTypeName("JPH_Matrix4x4 *")] float4x4* result, [NativeTypeName("const JPH_Vec3 *")] float3* translation);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_Translation(JPH_Mat4* result, [NativeTypeName("const JPH_Vec3 *")] float3* translation);
+        public static extern void JPH_Matrix4x4_RotationTranslation([NativeTypeName("JPH_Matrix4x4 *")] float4x4* result, [NativeTypeName("const JPH_Quat *")] quaternion* rotation, [NativeTypeName("const JPH_Vec3 *")] float3* translation);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_RotationTranslation(JPH_Mat4* result, [NativeTypeName("const JPH_Quat *")] quaternion* rotation, [NativeTypeName("const JPH_Vec3 *")] float3* translation);
+        public static extern void JPH_Matrix4x4_InverseRotationTranslation([NativeTypeName("JPH_Matrix4x4 *")] float4x4* result, [NativeTypeName("const JPH_Quat *")] quaternion* rotation, [NativeTypeName("const JPH_Vec3 *")] float3* translation);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_InverseRotationTranslation(JPH_Mat4* result, [NativeTypeName("const JPH_Quat *")] quaternion* rotation, [NativeTypeName("const JPH_Vec3 *")] float3* translation);
+        public static extern void JPH_Matrix4x4_Scale([NativeTypeName("JPH_Matrix4x4 *")] float4x4* result, [NativeTypeName("const JPH_Vec3 *")] float3* scale);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_Scale(JPH_Mat4* result, [NativeTypeName("const JPH_Vec3 *")] float3* scale);
+        public static extern void JPH_Matrix4x4_Inversed([NativeTypeName("const JPH_Matrix4x4 *")] float4x4* m, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_Transposed([NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* m, JPH_Mat4* result);
+        public static extern void JPH_Matrix4x4_Transposed([NativeTypeName("const JPH_Matrix4x4 *")] float4x4* m, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_Inversed([NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* matrix, JPH_Mat4* result);
+        public static extern void JPH_RMatrix4x4_Zero([NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_GetAxisX([NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* matrix, [NativeTypeName("JPH_Vec3 *")] float3* result);
+        public static extern void JPH_RMatrix4x4_Identity([NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_GetAxisY([NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* matrix, [NativeTypeName("JPH_Vec3 *")] float3* result);
+        public static extern void JPH_RMatrix4x4_Rotation([NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result, [NativeTypeName("const JPH_Quat *")] quaternion* rotation);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_GetAxisZ([NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* matrix, [NativeTypeName("JPH_Vec3 *")] float3* result);
+        public static extern void JPH_RMatrix4x4_Translation([NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result, [NativeTypeName("const JPH_RVec3 *")] rvec3* translation);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_GetTranslation([NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* matrix, [NativeTypeName("JPH_Vec3 *")] float3* result);
+        public static extern void JPH_RMatrix4x4_RotationTranslation([NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result, [NativeTypeName("const JPH_Quat *")] quaternion* rotation, [NativeTypeName("const JPH_RVec3 *")] rvec3* translation);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Mat4_GetQuaternion([NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* matrix, [NativeTypeName("JPH_Quat *")] quaternion* result);
+        public static extern void JPH_RMatrix4x4_InverseRotationTranslation([NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result, [NativeTypeName("const JPH_Quat *")] quaternion* rotation, [NativeTypeName("const JPH_RVec3 *")] rvec3* translation);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_RMatrix4x4_Scale([NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result, [NativeTypeName("const JPH_Vec3 *")] float3* scale);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_RMatrix4x4_Inversed([NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* m, [NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_Matrix4x4_GetAxisX([NativeTypeName("const JPH_Matrix4x4 *")] float4x4* matrix, [NativeTypeName("JPH_Vec3 *")] float3* result);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_Matrix4x4_GetAxisY([NativeTypeName("const JPH_Matrix4x4 *")] float4x4* matrix, [NativeTypeName("JPH_Vec3 *")] float3* result);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_Matrix4x4_GetAxisZ([NativeTypeName("const JPH_Matrix4x4 *")] float4x4* matrix, [NativeTypeName("JPH_Vec3 *")] float3* result);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_Matrix4x4_GetTranslation([NativeTypeName("const JPH_Matrix4x4 *")] float4x4* matrix, [NativeTypeName("JPH_Vec3 *")] float3* result);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_Matrix4x4_GetQuaternion([NativeTypeName("const JPH_Matrix4x4 *")] float4x4* matrix, [NativeTypeName("JPH_Quat *")] quaternion* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern JPH_PhysicsMaterial* JPH_PhysicsMaterial_Create([NativeTypeName("const char *")] sbyte* name, uint color);
@@ -2378,9 +2229,6 @@ namespace Jolt
         public static extern void JPH_ShapeSettings_SetUserData(JPH_ShapeSettings* settings, [NativeTypeName("uint64_t")] ulong userData);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Shape_Draw([NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* centerOfMassTransform, [NativeTypeName("const JPH_Vec3 *")] float3* scale, [NativeTypeName("JPH_Color")] uint color, [NativeTypeName("bool")] NativeBool useMaterialColors, [NativeTypeName("bool")] NativeBool drawWireframe);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_Shape_Destroy(JPH_Shape* shape);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -2412,7 +2260,7 @@ namespace Jolt
         public static extern uint JPH_Shape_GetSubShapeIDBitsRecursive([NativeTypeName("const JPH_Shape *")] JPH_Shape* shape);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Shape_GetWorldSpaceBounds([NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, [NativeTypeName("JPH_RMat4 *")] JPH_Mat4* centerOfMassTransform, [NativeTypeName("JPH_Vec3 *")] float3* scale, JPH_AABox* result);
+        public static extern void JPH_Shape_GetWorldSpaceBounds([NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, [NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* centerOfMassTransform, [NativeTypeName("JPH_Vec3 *")] float3* scale, JPH_AABox* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern float JPH_Shape_GetInnerRadius([NativeTypeName("const JPH_Shape *")] JPH_Shape* shape);
@@ -2432,7 +2280,7 @@ namespace Jolt
         public static extern void JPH_Shape_GetSurfaceNormal([NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, [NativeTypeName("JPH_SubShapeID")] uint subShapeID, [NativeTypeName("JPH_Vec3 *")] float3* localPosition, [NativeTypeName("JPH_Vec3 *")] float3* normal);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Shape_GetSupportingFace([NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, [NativeTypeName("const JPH_SubShapeID")] uint subShapeID, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_Vec3 *")] float3* scale, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* centerOfMassTransform, JPH_SupportingFace* outVertices);
+        public static extern void JPH_Shape_GetSupportingFace([NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, [NativeTypeName("const JPH_SubShapeID")] uint subShapeID, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_Vec3 *")] float3* scale, [NativeTypeName("const JPH_Matrix4x4 *")] float4x4* centerOfMassTransform, JPH_SupportingFace* outVertices);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern float JPH_Shape_GetVolume([NativeTypeName("const JPH_Shape *")] JPH_Shape* shape);
@@ -2654,64 +2502,16 @@ namespace Jolt
         public static extern uint JPH_MeshShape_GetTriangleUserData([NativeTypeName("const JPH_MeshShape *")] JPH_MeshShape* shape, [NativeTypeName("JPH_SubShapeID")] uint id);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern JPH_HeightFieldShapeSettings* JPH_HeightFieldShapeSettings_Create([NativeTypeName("const float *")] float* samples, [NativeTypeName("const JPH_Vec3 *")] float3* offset, [NativeTypeName("const JPH_Vec3 *")] float3* scale, uint sampleCount, [NativeTypeName("const uint8_t *")] byte* materialIndices);
+        public static extern JPH_HeightFieldShapeSettings* JPH_HeightFieldShapeSettings_Create([NativeTypeName("const float *")] float* samples, [NativeTypeName("const JPH_Vec3 *")] float3* offset, [NativeTypeName("const JPH_Vec3 *")] float3* scale, uint sampleCount);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern JPH_HeightFieldShape* JPH_HeightFieldShapeSettings_CreateShape(JPH_HeightFieldShapeSettings* settings);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_HeightFieldShapeSettings_DetermineMinAndMaxSample([NativeTypeName("const JPH_HeightFieldShapeSettings *")] JPH_HeightFieldShapeSettings* settings, float* pOutMinValue, float* pOutMaxValue, float* pOutQuantizationScale);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern uint JPH_HeightFieldShapeSettings_CalculateBitsPerSampleForError([NativeTypeName("const JPH_HeightFieldShapeSettings *")] JPH_HeightFieldShapeSettings* settings, float maxError);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_HeightFieldShapeSettings_GetOffset([NativeTypeName("const JPH_HeightFieldShapeSettings *")] JPH_HeightFieldShapeSettings* shape, [NativeTypeName("JPH_Vec3 *")] float3* result);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_HeightFieldShapeSettings_SetOffset(JPH_HeightFieldShapeSettings* settings, [NativeTypeName("const JPH_Vec3 *")] float3* value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_HeightFieldShapeSettings_GetScale([NativeTypeName("const JPH_HeightFieldShapeSettings *")] JPH_HeightFieldShapeSettings* shape, [NativeTypeName("JPH_Vec3 *")] float3* result);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_HeightFieldShapeSettings_SetScale(JPH_HeightFieldShapeSettings* settings, [NativeTypeName("const JPH_Vec3 *")] float3* value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern uint JPH_HeightFieldShapeSettings_GetSampleCount([NativeTypeName("const JPH_HeightFieldShapeSettings *")] JPH_HeightFieldShapeSettings* settings);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_HeightFieldShapeSettings_SetSampleCount(JPH_HeightFieldShapeSettings* settings, uint value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_HeightFieldShapeSettings_GetMinHeightValue([NativeTypeName("const JPH_HeightFieldShapeSettings *")] JPH_HeightFieldShapeSettings* settings);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_HeightFieldShapeSettings_SetMinHeightValue(JPH_HeightFieldShapeSettings* settings, float value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_HeightFieldShapeSettings_GetMaxHeightValue([NativeTypeName("const JPH_HeightFieldShapeSettings *")] JPH_HeightFieldShapeSettings* settings);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_HeightFieldShapeSettings_SetMaxHeightValue(JPH_HeightFieldShapeSettings* settings, float value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern uint JPH_HeightFieldShapeSettings_GetBlockSize([NativeTypeName("const JPH_HeightFieldShapeSettings *")] JPH_HeightFieldShapeSettings* settings);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_HeightFieldShapeSettings_SetBlockSize(JPH_HeightFieldShapeSettings* settings, uint value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern uint JPH_HeightFieldShapeSettings_GetBitsPerSample([NativeTypeName("const JPH_HeightFieldShapeSettings *")] JPH_HeightFieldShapeSettings* settings);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_HeightFieldShapeSettings_SetBitsPerSample(JPH_HeightFieldShapeSettings* settings, uint value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_HeightFieldShapeSettings_GetActiveEdgeCosThresholdAngle([NativeTypeName("const JPH_HeightFieldShapeSettings *")] JPH_HeightFieldShapeSettings* settings);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_HeightFieldShapeSettings_SetActiveEdgeCosThresholdAngle(JPH_HeightFieldShapeSettings* settings, float value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern JPH_HeightFieldShape* JPH_HeightFieldShapeSettings_CreateShape(JPH_HeightFieldShapeSettings* settings);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern uint JPH_HeightFieldShape_GetSampleCount([NativeTypeName("const JPH_HeightFieldShape *")] JPH_HeightFieldShape* shape);
@@ -3134,10 +2934,10 @@ namespace Jolt
         public static extern JPH_Body* JPH_TwoBodyConstraint_GetBody2([NativeTypeName("const JPH_TwoBodyConstraint *")] JPH_TwoBodyConstraint* constraint);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_TwoBodyConstraint_GetConstraintToBody1Matrix([NativeTypeName("const JPH_TwoBodyConstraint *")] JPH_TwoBodyConstraint* constraint, JPH_Mat4* result);
+        public static extern void JPH_TwoBodyConstraint_GetConstraintToBody1Matrix([NativeTypeName("const JPH_TwoBodyConstraint *")] JPH_TwoBodyConstraint* constraint, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_TwoBodyConstraint_GetConstraintToBody2Matrix([NativeTypeName("const JPH_TwoBodyConstraint *")] JPH_TwoBodyConstraint* constraint, JPH_Mat4* result);
+        public static extern void JPH_TwoBodyConstraint_GetConstraintToBody2Matrix([NativeTypeName("const JPH_TwoBodyConstraint *")] JPH_TwoBodyConstraint* constraint, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_FixedConstraintSettings_Init(JPH_FixedConstraintSettings* settings);
@@ -3607,6 +3407,10 @@ namespace Jolt
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
+        public static extern NativeBool JPH_BodyInterface_IsActive(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyID);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("bool")]
         public static extern NativeBool JPH_BodyInterface_IsAdded(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyID);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -3682,26 +3486,10 @@ namespace Jolt
         public static extern void JPH_BodyInterface_NotifyShapeChanged(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId, [NativeTypeName("JPH_Vec3 *")] float3* previousCenterOfMass, [NativeTypeName("bool")] NativeBool updateMassProperties, [NativeTypeName("JPH_Activation")] Activation activationMode);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_BodyInterface_ActivateBody(JPH_BodyInterface* bodyInterface, [NativeTypeName("const JPH_BodyID")] BodyID bodyId);
+        public static extern void JPH_BodyInterface_ActivateBody(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_BodyInterface_ActivateBodies(JPH_BodyInterface* bodyInterface, [NativeTypeName("const JPH_BodyID *")] BodyID* bodyIDs, uint count);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_BodyInterface_ActivateBodiesInAABox(JPH_BodyInterface* bodyInterface, [NativeTypeName("const JPH_AABox *")] JPH_AABox* box, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_BodyInterface_DeactivateBody(JPH_BodyInterface* bodyInterface, [NativeTypeName("const JPH_BodyID")] BodyID bodyId);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_BodyInterface_DeactivateBodies(JPH_BodyInterface* bodyInterface, [NativeTypeName("const JPH_BodyID *")] BodyID* bodyIDs, uint count);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_BodyInterface_IsActive([NativeTypeName("const JPH_BodyInterface *")] JPH_BodyInterface* bodyInterface, [NativeTypeName("const JPH_BodyID")] BodyID bodyID);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_BodyInterface_ResetSleepTimer(JPH_BodyInterface* bodyInterface, [NativeTypeName("const JPH_BodyID")] BodyID bodyID);
+        public static extern void JPH_BodyInterface_DeactivateBody(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("JPH_ObjectLayer")]
@@ -3711,10 +3499,10 @@ namespace Jolt
         public static extern void JPH_BodyInterface_SetObjectLayer(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId, [NativeTypeName("JPH_ObjectLayer")] ObjectLayer layer);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_BodyInterface_GetWorldTransform(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId, [NativeTypeName("JPH_RMat4 *")] JPH_Mat4* result);
+        public static extern void JPH_BodyInterface_GetWorldTransform(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId, [NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_BodyInterface_GetCenterOfMassTransform(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId, [NativeTypeName("JPH_RMat4 *")] JPH_Mat4* result);
+        public static extern void JPH_BodyInterface_GetCenterOfMassTransform(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId, [NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_BodyInterface_MoveKinematic(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId, [NativeTypeName("JPH_RVec3 *")] rvec3* targetPosition, [NativeTypeName("JPH_Quat *")] quaternion* targetRotation, float deltaTime);
@@ -3773,7 +3561,7 @@ namespace Jolt
         public static extern MotionQuality JPH_BodyInterface_GetMotionQuality(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_BodyInterface_GetInverseInertia(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId, JPH_Mat4* result);
+        public static extern void JPH_BodyInterface_GetInverseInertia(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_BodyInterface_SetGravityFactor(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId, float value);
@@ -3794,13 +3582,6 @@ namespace Jolt
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("uint64_t")]
         public static extern ulong JPH_BodyInterface_GetUserData(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_BodyInterface_SetIsSensor(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId, [NativeTypeName("bool")] NativeBool value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_BodyInterface_IsSensor(JPH_BodyInterface* bodyInterface, [NativeTypeName("JPH_BodyID")] BodyID bodyId);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("const JPH_PhysicsMaterial *")]
@@ -3884,7 +3665,7 @@ namespace Jolt
         public static extern void JPH_RRayCast_GetPointOnRay([NativeTypeName("const JPH_RVec3 *")] rvec3* origin, [NativeTypeName("const JPH_Vec3 *")] float3* direction, float fraction, [NativeTypeName("JPH_RVec3 *")] rvec3* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_MassProperties_DecomposePrincipalMomentsOfInertia(JPH_MassProperties* properties, JPH_Mat4* rotation, [NativeTypeName("JPH_Vec3 *")] float3* diagonal);
+        public static extern void JPH_MassProperties_DecomposePrincipalMomentsOfInertia(JPH_MassProperties* properties, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* rotation, [NativeTypeName("JPH_Vec3 *")] float3* diagonal);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_MassProperties_ScaleToMass(JPH_MassProperties* properties, float mass);
@@ -3900,59 +3681,59 @@ namespace Jolt
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_BroadPhaseQuery_CastRay([NativeTypeName("const JPH_BroadPhaseQuery *")] JPH_BroadPhaseQuery* query, [NativeTypeName("const JPH_Vec3 *")] float3* origin, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("JPH_RayCastBodyCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter);
+        public static extern NativeBool JPH_BroadPhaseQuery_CastRay([NativeTypeName("const JPH_BroadPhaseQuery *")] JPH_BroadPhaseQuery* query, [NativeTypeName("const JPH_Vec3 *")] float3* origin, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("JPH_RayCastBodyCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_BroadPhaseQuery_CastRay2([NativeTypeName("const JPH_BroadPhaseQuery *")] JPH_BroadPhaseQuery* query, [NativeTypeName("const JPH_Vec3 *")] float3* origin, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("JPH_CollisionCollectorType")] CollisionCollectorType collectorType, [NativeTypeName("JPH_RayCastBodyResultCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter);
+        public static extern NativeBool JPH_BroadPhaseQuery_CastRay2([NativeTypeName("const JPH_BroadPhaseQuery *")] JPH_BroadPhaseQuery* query, [NativeTypeName("const JPH_Vec3 *")] float3* origin, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("JPH_CollisionCollectorType")] CollisionCollectorType collectorType, [NativeTypeName("JPH_RayCastBodyResultCallback *")] nint callback, [NativeTypeName("void*")] nint userData, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_BroadPhaseQuery_CollideAABox([NativeTypeName("const JPH_BroadPhaseQuery *")] JPH_BroadPhaseQuery* query, [NativeTypeName("const JPH_AABox *")] JPH_AABox* box, [NativeTypeName("JPH_CollideShapeBodyCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter);
+        public static extern NativeBool JPH_BroadPhaseQuery_CollideAABox([NativeTypeName("const JPH_BroadPhaseQuery *")] JPH_BroadPhaseQuery* query, [NativeTypeName("const JPH_AABox *")] JPH_AABox* box, [NativeTypeName("JPH_CollideShapeBodyCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_BroadPhaseQuery_CollideSphere([NativeTypeName("const JPH_BroadPhaseQuery *")] JPH_BroadPhaseQuery* query, [NativeTypeName("const JPH_Vec3 *")] float3* center, float radius, [NativeTypeName("JPH_CollideShapeBodyCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter);
+        public static extern NativeBool JPH_BroadPhaseQuery_CollideSphere([NativeTypeName("const JPH_BroadPhaseQuery *")] JPH_BroadPhaseQuery* query, [NativeTypeName("const JPH_Vec3 *")] float3* center, float radius, [NativeTypeName("JPH_CollideShapeBodyCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_BroadPhaseQuery_CollidePoint([NativeTypeName("const JPH_BroadPhaseQuery *")] JPH_BroadPhaseQuery* query, [NativeTypeName("const JPH_Vec3 *")] float3* point, [NativeTypeName("JPH_CollideShapeBodyCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter);
+        public static extern NativeBool JPH_BroadPhaseQuery_CollidePoint([NativeTypeName("const JPH_BroadPhaseQuery *")] JPH_BroadPhaseQuery* query, [NativeTypeName("const JPH_Vec3 *")] float3* point, [NativeTypeName("JPH_CollideShapeBodyCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_NarrowPhaseQuery_CastRay([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_RVec3 *")] rvec3* origin, [NativeTypeName("const JPH_Vec3 *")] float3* direction, JPH_RayCastResult* hit, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter);
+        public static extern NativeBool JPH_NarrowPhaseQuery_CastRay([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_RVec3 *")] rvec3* origin, [NativeTypeName("const JPH_Vec3 *")] float3* direction, JPH_RayCastResult* hit, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_NarrowPhaseQuery_CastRay2([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_RVec3 *")] rvec3* origin, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_RayCastSettings *")] JPH_RayCastSettings* rayCastSettings, [NativeTypeName("JPH_CastRayCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
+        public static extern NativeBool JPH_NarrowPhaseQuery_CastRay2([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_RVec3 *")] rvec3* origin, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_RayCastSettings *")] JPH_RayCastSettings* rayCastSettings, [NativeTypeName("JPH_CastRayCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_NarrowPhaseQuery_CastRay3([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_RVec3 *")] rvec3* origin, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_RayCastSettings *")] JPH_RayCastSettings* rayCastSettings, [NativeTypeName("JPH_CollisionCollectorType")] CollisionCollectorType collectorType, [NativeTypeName("JPH_CastRayResultCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
+        public static extern NativeBool JPH_NarrowPhaseQuery_CastRay3([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_RVec3 *")] rvec3* origin, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_RayCastSettings *")] JPH_RayCastSettings* rayCastSettings, [NativeTypeName("JPH_CollisionCollectorType")] CollisionCollectorType collectorType, [NativeTypeName("JPH_CastRayResultCallback *")] nint callback, [NativeTypeName("void*")] nint userData, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_NarrowPhaseQuery_CollidePoint([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_RVec3 *")] rvec3* point, [NativeTypeName("JPH_CollidePointCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
+        public static extern NativeBool JPH_NarrowPhaseQuery_CollidePoint([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_RVec3 *")] rvec3* point, [NativeTypeName("JPH_CollidePointCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_NarrowPhaseQuery_CollidePoint2([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_RVec3 *")] rvec3* point, [NativeTypeName("JPH_CollisionCollectorType")] CollisionCollectorType collectorType, [NativeTypeName("JPH_CollidePointResultCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
+        public static extern NativeBool JPH_NarrowPhaseQuery_CollidePoint2([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_RVec3 *")] rvec3* point, [NativeTypeName("JPH_CollisionCollectorType")] CollisionCollectorType collectorType, [NativeTypeName("JPH_CollidePointResultCallback *")] nint callback, [NativeTypeName("void*")] nint userData, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_NarrowPhaseQuery_CollideShape([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, [NativeTypeName("const JPH_Vec3 *")] float3* scale, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* centerOfMassTransform, [NativeTypeName("const JPH_CollideShapeSettings *")] JPH_CollideShapeSettings* settings, [NativeTypeName("JPH_RVec3 *")] rvec3* baseOffset, [NativeTypeName("JPH_CollideShapeCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
+        public static extern NativeBool JPH_NarrowPhaseQuery_CollideShape([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, [NativeTypeName("const JPH_Vec3 *")] float3* scale, [NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* centerOfMassTransform, [NativeTypeName("const JPH_CollideShapeSettings *")] JPH_CollideShapeSettings* settings, [NativeTypeName("JPH_RVec3 *")] rvec3* baseOffset, [NativeTypeName("JPH_CollideShapeCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_NarrowPhaseQuery_CollideShape2([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, [NativeTypeName("const JPH_Vec3 *")] float3* scale, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* centerOfMassTransform, [NativeTypeName("const JPH_CollideShapeSettings *")] JPH_CollideShapeSettings* settings, [NativeTypeName("JPH_RVec3 *")] rvec3* baseOffset, [NativeTypeName("JPH_CollisionCollectorType")] CollisionCollectorType collectorType, [NativeTypeName("JPH_CollideShapeResultCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
+        public static extern NativeBool JPH_NarrowPhaseQuery_CollideShape2([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, [NativeTypeName("const JPH_Vec3 *")] float3* scale, [NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* centerOfMassTransform, [NativeTypeName("const JPH_CollideShapeSettings *")] JPH_CollideShapeSettings* settings, [NativeTypeName("JPH_RVec3 *")] rvec3* baseOffset, [NativeTypeName("JPH_CollisionCollectorType")] CollisionCollectorType collectorType, [NativeTypeName("JPH_CollideShapeResultCallback *")] nint callback, [NativeTypeName("void*")] nint userData, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_NarrowPhaseQuery_CastShape([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* worldTransform, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_ShapeCastSettings *")] JPH_ShapeCastSettings* settings, [NativeTypeName("JPH_RVec3 *")] rvec3* baseOffset, [NativeTypeName("JPH_CastShapeCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
+        public static extern NativeBool JPH_NarrowPhaseQuery_CastShape([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, [NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* worldTransform, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_ShapeCastSettings *")] JPH_ShapeCastSettings* settings, [NativeTypeName("JPH_RVec3 *")] rvec3* baseOffset, [NativeTypeName("JPH_CastShapeCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_NarrowPhaseQuery_CastShape2([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* worldTransform, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_ShapeCastSettings *")] JPH_ShapeCastSettings* settings, [NativeTypeName("JPH_RVec3 *")] rvec3* baseOffset, [NativeTypeName("JPH_CollisionCollectorType")] CollisionCollectorType collectorType, [NativeTypeName("JPH_CastShapeResultCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_BroadPhaseLayerFilter *")] JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, [NativeTypeName("const JPH_ObjectLayerFilter *")] JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
+        public static extern NativeBool JPH_NarrowPhaseQuery_CastShape2([NativeTypeName("const JPH_NarrowPhaseQuery *")] JPH_NarrowPhaseQuery* query, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape, [NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* worldTransform, [NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_ShapeCastSettings *")] JPH_ShapeCastSettings* settings, [NativeTypeName("JPH_RVec3 *")] rvec3* baseOffset, [NativeTypeName("JPH_CollisionCollectorType")] CollisionCollectorType collectorType, [NativeTypeName("JPH_CastShapeResultCallback *")] nint callback, [NativeTypeName("void*")] nint userData, JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter, JPH_ObjectLayerFilter* objectLayerFilter, [NativeTypeName("const JPH_BodyFilter *")] JPH_BodyFilter* bodyFilter, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("JPH_BodyID")]
@@ -4125,7 +3906,7 @@ namespace Jolt
         public static extern void JPH_Body_ResetMotion(JPH_Body* body);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Body_GetInverseInertia(JPH_Body* body, JPH_Mat4* result);
+        public static extern void JPH_Body_GetInverseInertia(JPH_Body* body, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_Body_AddImpulse(JPH_Body* body, [NativeTypeName("const JPH_Vec3 *")] float3* impulse);
@@ -4162,16 +3943,16 @@ namespace Jolt
         public static extern void JPH_Body_GetRotation([NativeTypeName("const JPH_Body *")] JPH_Body* body, [NativeTypeName("JPH_Quat *")] quaternion* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Body_GetWorldTransform([NativeTypeName("const JPH_Body *")] JPH_Body* body, [NativeTypeName("JPH_RMat4 *")] JPH_Mat4* result);
+        public static extern void JPH_Body_GetWorldTransform([NativeTypeName("const JPH_Body *")] JPH_Body* body, [NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_Body_GetCenterOfMassPosition([NativeTypeName("const JPH_Body *")] JPH_Body* body, [NativeTypeName("JPH_RVec3 *")] rvec3* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Body_GetCenterOfMassTransform([NativeTypeName("const JPH_Body *")] JPH_Body* body, [NativeTypeName("JPH_RMat4 *")] JPH_Mat4* result);
+        public static extern void JPH_Body_GetCenterOfMassTransform([NativeTypeName("const JPH_Body *")] JPH_Body* body, [NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Body_GetInverseCenterOfMassTransform([NativeTypeName("const JPH_Body *")] JPH_Body* body, [NativeTypeName("JPH_RMat4 *")] JPH_Mat4* result);
+        public static extern void JPH_Body_GetInverseCenterOfMassTransform([NativeTypeName("const JPH_Body *")] JPH_Body* body, [NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_Body_GetWorldSpaceBounds([NativeTypeName("const JPH_Body *")] JPH_Body* body, JPH_AABox* result);
@@ -4298,6 +4079,61 @@ namespace Jolt
         public static extern void JPH_ContactManifold_GetWorldSpaceContactPointOn2([NativeTypeName("const JPH_ContactManifold *")] JPH_ContactManifold* manifold, uint index, [NativeTypeName("JPH_RVec3 *")] rvec3* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern float JPH_ContactSettings_GetFriction(JPH_ContactSettings* settings);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_ContactSettings_SetFriction(JPH_ContactSettings* settings, float friction);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern float JPH_ContactSettings_GetRestitution(JPH_ContactSettings* settings);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_ContactSettings_SetRestitution(JPH_ContactSettings* settings, float restitution);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern float JPH_ContactSettings_GetInvMassScale1(JPH_ContactSettings* settings);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_ContactSettings_SetInvMassScale1(JPH_ContactSettings* settings, float scale);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern float JPH_ContactSettings_GetInvInertiaScale1(JPH_ContactSettings* settings);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_ContactSettings_SetInvInertiaScale1(JPH_ContactSettings* settings, float scale);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern float JPH_ContactSettings_GetInvMassScale2(JPH_ContactSettings* settings);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_ContactSettings_SetInvMassScale2(JPH_ContactSettings* settings, float scale);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern float JPH_ContactSettings_GetInvInertiaScale2(JPH_ContactSettings* settings);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_ContactSettings_SetInvInertiaScale2(JPH_ContactSettings* settings, float scale);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("bool")]
+        public static extern NativeBool JPH_ContactSettings_GetIsSensor([NativeTypeName("const JPH_ContactSettings *")] JPH_ContactSettings* settings);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_ContactSettings_SetIsSensor(JPH_ContactSettings* settings, [NativeTypeName("bool")] NativeBool sensor);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_ContactSettings_GetRelativeLinearSurfaceVelocity(JPH_ContactSettings* settings, [NativeTypeName("JPH_Vec3 *")] float3* result);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_ContactSettings_SetRelativeLinearSurfaceVelocity(JPH_ContactSettings* settings, [NativeTypeName("JPH_Vec3 *")] float3* velocity);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_ContactSettings_GetRelativeAngularSurfaceVelocity(JPH_ContactSettings* settings, [NativeTypeName("JPH_Vec3 *")] float3* result);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_ContactSettings_SetRelativeAngularSurfaceVelocity(JPH_ContactSettings* settings, [NativeTypeName("JPH_Vec3 *")] float3* velocity);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_CharacterBase_Destroy(JPH_CharacterBase* character);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -4412,7 +4248,7 @@ namespace Jolt
         public static extern void JPH_Character_GetCenterOfMassPosition(JPH_Character* character, [NativeTypeName("JPH_RVec3 *")] rvec3* result, [NativeTypeName("bool")] NativeBool lockBodies);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Character_GetWorldTransform(JPH_Character* character, [NativeTypeName("JPH_RMat4 *")] JPH_Mat4* result, [NativeTypeName("bool")] NativeBool lockBodies);
+        public static extern void JPH_Character_GetWorldTransform(JPH_Character* character, [NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result, [NativeTypeName("bool")] NativeBool lockBodies);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("JPH_ObjectLayer")]
@@ -4459,10 +4295,10 @@ namespace Jolt
         public static extern void JPH_CharacterVirtual_SetRotation(JPH_CharacterVirtual* character, [NativeTypeName("const JPH_Quat *")] quaternion* rotation);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_CharacterVirtual_GetWorldTransform(JPH_CharacterVirtual* character, [NativeTypeName("JPH_RMat4 *")] JPH_Mat4* result);
+        public static extern void JPH_CharacterVirtual_GetWorldTransform(JPH_CharacterVirtual* character, [NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_CharacterVirtual_GetCenterOfMassTransform(JPH_CharacterVirtual* character, [NativeTypeName("JPH_RMat4 *")] JPH_Mat4* result);
+        public static extern void JPH_CharacterVirtual_GetCenterOfMassTransform(JPH_CharacterVirtual* character, [NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern float JPH_CharacterVirtual_GetMass(JPH_CharacterVirtual* character);
@@ -4612,15 +4448,15 @@ namespace Jolt
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_CollisionDispatch_CollideShapeVsShape([NativeTypeName("const JPH_Shape *")] JPH_Shape* shape1, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape2, [NativeTypeName("const JPH_Vec3 *")] float3* scale1, [NativeTypeName("const JPH_Vec3 *")] float3* scale2, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* centerOfMassTransform1, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* centerOfMassTransform2, [NativeTypeName("const JPH_CollideShapeSettings *")] JPH_CollideShapeSettings* collideShapeSettings, [NativeTypeName("JPH_CollideShapeCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
+        public static extern NativeBool JPH_CollisionDispatch_CollideShapeVsShape([NativeTypeName("const JPH_Shape *")] JPH_Shape* shape1, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape2, [NativeTypeName("const JPH_Vec3 *")] float3* scale1, [NativeTypeName("const JPH_Vec3 *")] float3* scale2, [NativeTypeName("const JPH_Matrix4x4 *")] float4x4* centerOfMassTransform1, [NativeTypeName("const JPH_Matrix4x4 *")] float4x4* centerOfMassTransform2, [NativeTypeName("const JPH_CollideShapeSettings *")] JPH_CollideShapeSettings* collideShapeSettings, [NativeTypeName("JPH_CollideShapeCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_CollisionDispatch_CastShapeVsShapeLocalSpace([NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape1, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape2, [NativeTypeName("const JPH_Vec3 *")] float3* scale1InShape2LocalSpace, [NativeTypeName("const JPH_Vec3 *")] float3* scale2, JPH_Mat4* centerOfMassTransform1InShape2LocalSpace, JPH_Mat4* centerOfMassWorldTransform2, [NativeTypeName("const JPH_ShapeCastSettings *")] JPH_ShapeCastSettings* shapeCastSettings, [NativeTypeName("JPH_CastShapeCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
+        public static extern NativeBool JPH_CollisionDispatch_CastShapeVsShapeLocalSpace([NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape1, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape2, [NativeTypeName("const JPH_Vec3 *")] float3* scale1InShape2LocalSpace, [NativeTypeName("const JPH_Vec3 *")] float3* scale2, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* centerOfMassTransform1InShape2LocalSpace, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* centerOfMassWorldTransform2, [NativeTypeName("const JPH_ShapeCastSettings *")] JPH_ShapeCastSettings* shapeCastSettings, [NativeTypeName("JPH_CastShapeCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_CollisionDispatch_CastShapeVsShapeWorldSpace([NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape1, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape2, [NativeTypeName("const JPH_Vec3 *")] float3* scale1, [NativeTypeName("const JPH_Vec3 *")] float3* inScale2, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* centerOfMassWorldTransform1, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* centerOfMassWorldTransform2, [NativeTypeName("const JPH_ShapeCastSettings *")] JPH_ShapeCastSettings* shapeCastSettings, [NativeTypeName("JPH_CastShapeCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
+        public static extern NativeBool JPH_CollisionDispatch_CastShapeVsShapeWorldSpace([NativeTypeName("const JPH_Vec3 *")] float3* direction, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape1, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape2, [NativeTypeName("const JPH_Vec3 *")] float3* scale1, [NativeTypeName("const JPH_Vec3 *")] float3* inScale2, [NativeTypeName("const JPH_Matrix4x4 *")] float4x4* centerOfMassWorldTransform1, [NativeTypeName("const JPH_Matrix4x4 *")] float4x4* centerOfMassWorldTransform2, [NativeTypeName("const JPH_ShapeCastSettings *")] JPH_ShapeCastSettings* shapeCastSettings, [NativeTypeName("JPH_CastShapeCollectorCallback *")] nint callback, [NativeTypeName("void*")] nint userData, [NativeTypeName("const JPH_ShapeFilter *")] JPH_ShapeFilter* shapeFilter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_DebugRenderer_SetProcs([NativeTypeName("const JPH_DebugRenderer_Procs *")] JPH_DebugRenderer_Procs* procs);
@@ -4644,7 +4480,7 @@ namespace Jolt
         public static extern void JPH_DebugRenderer_DrawWireBox(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_AABox *")] JPH_AABox* box, [NativeTypeName("JPH_Color")] uint color);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_DebugRenderer_DrawWireBox2(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* matrix, [NativeTypeName("const JPH_AABox *")] JPH_AABox* box, [NativeTypeName("JPH_Color")] uint color);
+        public static extern void JPH_DebugRenderer_DrawWireBox2(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* matrix, [NativeTypeName("const JPH_AABox *")] JPH_AABox* box, [NativeTypeName("JPH_Color")] uint color);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_DebugRenderer_DrawMarker(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RVec3 *")] rvec3* position, [NativeTypeName("JPH_Color")] uint color, float size);
@@ -4653,7 +4489,7 @@ namespace Jolt
         public static extern void JPH_DebugRenderer_DrawArrow(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RVec3 *")] rvec3* from, [NativeTypeName("const JPH_RVec3 *")] rvec3* to, [NativeTypeName("JPH_Color")] uint color, float size);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_DebugRenderer_DrawCoordinateSystem(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* matrix, float size);
+        public static extern void JPH_DebugRenderer_DrawCoordinateSystem(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* matrix, float size);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_DebugRenderer_DrawPlane(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RVec3 *")] rvec3* point, [NativeTypeName("const JPH_Vec3 *")] float3* normal, [NativeTypeName("JPH_Color")] uint color, float size);
@@ -4665,7 +4501,7 @@ namespace Jolt
         public static extern void JPH_DebugRenderer_DrawWireSphere(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RVec3 *")] rvec3* center, float radius, [NativeTypeName("JPH_Color")] uint color, int level);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_DebugRenderer_DrawWireUnitSphere(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* matrix, [NativeTypeName("JPH_Color")] uint color, int level);
+        public static extern void JPH_DebugRenderer_DrawWireUnitSphere(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* matrix, [NativeTypeName("JPH_Color")] uint color, int level);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_DebugRenderer_DrawTriangle(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RVec3 *")] rvec3* v1, [NativeTypeName("const JPH_RVec3 *")] rvec3* v2, [NativeTypeName("const JPH_RVec3 *")] rvec3* v3, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow);
@@ -4674,34 +4510,34 @@ namespace Jolt
         public static extern void JPH_DebugRenderer_DrawBox(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_AABox *")] JPH_AABox* box, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_DebugRenderer_DrawBox2(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* matrix, [NativeTypeName("const JPH_AABox *")] JPH_AABox* box, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
+        public static extern void JPH_DebugRenderer_DrawBox2(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* matrix, [NativeTypeName("const JPH_AABox *")] JPH_AABox* box, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_DebugRenderer_DrawSphere(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RVec3 *")] rvec3* center, float radius, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_DebugRenderer_DrawUnitSphere(JPH_DebugRenderer* renderer, [NativeTypeName("JPH_RMat4")] JPH_Mat4 matrix, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
+        public static extern void JPH_DebugRenderer_DrawUnitSphere(JPH_DebugRenderer* renderer, [NativeTypeName("JPH_RMatrix4x4")] rmatrix4x4 matrix, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_DebugRenderer_DrawCapsule(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* matrix, float halfHeightOfCylinder, float radius, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
+        public static extern void JPH_DebugRenderer_DrawCapsule(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* matrix, float halfHeightOfCylinder, float radius, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_DebugRenderer_DrawCylinder(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* matrix, float halfHeight, float radius, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
+        public static extern void JPH_DebugRenderer_DrawCylinder(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* matrix, float halfHeight, float radius, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_DebugRenderer_DrawOpenCone(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RVec3 *")] rvec3* top, [NativeTypeName("const JPH_Vec3 *")] float3* axis, [NativeTypeName("const JPH_Vec3 *")] float3* perpendicular, float halfAngle, float length, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_DebugRenderer_DrawSwingConeLimits(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* matrix, float swingYHalfAngle, float swingZHalfAngle, float edgeLength, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
+        public static extern void JPH_DebugRenderer_DrawSwingConeLimits(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* matrix, float swingYHalfAngle, float swingZHalfAngle, float edgeLength, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_DebugRenderer_DrawSwingPyramidLimits(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* matrix, float minSwingYAngle, float maxSwingYAngle, float minSwingZAngle, float maxSwingZAngle, float edgeLength, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
+        public static extern void JPH_DebugRenderer_DrawSwingPyramidLimits(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* matrix, float minSwingYAngle, float maxSwingYAngle, float minSwingZAngle, float maxSwingZAngle, float edgeLength, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_DebugRenderer_DrawPie(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RVec3 *")] rvec3* center, float radius, [NativeTypeName("const JPH_Vec3 *")] float3* normal, [NativeTypeName("const JPH_Vec3 *")] float3* axis, float minAngle, float maxAngle, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_DebugRenderer_DrawTaperedCylinder(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMat4 *")] JPH_Mat4* inMatrix, float top, float bottom, float topRadius, float bottomRadius, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
+        public static extern void JPH_DebugRenderer_DrawTaperedCylinder(JPH_DebugRenderer* renderer, [NativeTypeName("const JPH_RMatrix4x4 *")] rmatrix4x4* inMatrix, float top, float bottom, float topRadius, float bottomRadius, [NativeTypeName("JPH_Color")] uint color, JPH_DebugRenderer_CastShadow castShadow, JPH_DebugRenderer_DrawMode drawMode);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern JPH_Skeleton* JPH_Skeleton_Create();
@@ -4735,114 +4571,6 @@ namespace Jolt
         public static extern NativeBool JPH_Skeleton_AreJointsCorrectlyOrdered([NativeTypeName("const JPH_Skeleton *")] JPH_Skeleton* skeleton);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern JPH_SkeletonPose* JPH_SkeletonPose_Create();
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonPose_Destroy(JPH_SkeletonPose* pose);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonPose_SetSkeleton(JPH_SkeletonPose* pose, [NativeTypeName("const JPH_Skeleton *")] JPH_Skeleton* skeleton);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("const JPH_Skeleton *")]
-        public static extern JPH_Skeleton* JPH_SkeletonPose_GetSkeleton([NativeTypeName("const JPH_SkeletonPose *")] JPH_SkeletonPose* pose);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonPose_SetRootOffset(JPH_SkeletonPose* pose, [NativeTypeName("const JPH_RVec3 *")] rvec3* offset);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonPose_GetRootOffset([NativeTypeName("const JPH_SkeletonPose *")] JPH_SkeletonPose* pose, [NativeTypeName("JPH_RVec3 *")] rvec3* result);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int JPH_SkeletonPose_GetJointCount([NativeTypeName("const JPH_SkeletonPose *")] JPH_SkeletonPose* pose);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonPose_GetJointState([NativeTypeName("const JPH_SkeletonPose *")] JPH_SkeletonPose* pose, int index, [NativeTypeName("JPH_Vec3 *")] float3* outTranslation, [NativeTypeName("JPH_Quat *")] quaternion* outRotation);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonPose_SetJointState(JPH_SkeletonPose* pose, int index, [NativeTypeName("const JPH_Vec3 *")] float3* translation, [NativeTypeName("const JPH_Quat *")] quaternion* rotation);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonPose_GetJointMatrix([NativeTypeName("const JPH_SkeletonPose *")] JPH_SkeletonPose* pose, int index, JPH_Mat4* result);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonPose_SetJointMatrix(JPH_SkeletonPose* pose, int index, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* matrix);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonPose_GetJointMatrices([NativeTypeName("const JPH_SkeletonPose *")] JPH_SkeletonPose* pose, JPH_Mat4* outMatrices, int count);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonPose_SetJointMatrices(JPH_SkeletonPose* pose, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* matrices, int count);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonPose_CalculateJointMatrices(JPH_SkeletonPose* pose);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonPose_CalculateJointStates(JPH_SkeletonPose* pose);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonPose_CalculateLocalSpaceJointMatrices([NativeTypeName("const JPH_SkeletonPose *")] JPH_SkeletonPose* pose, JPH_Mat4* outMatrices);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern JPH_SkeletalAnimation* JPH_SkeletalAnimation_Create();
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletalAnimation_Destroy(JPH_SkeletalAnimation* animation);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_SkeletalAnimation_GetDuration([NativeTypeName("const JPH_SkeletalAnimation *")] JPH_SkeletalAnimation* animation);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_SkeletalAnimation_IsLooping([NativeTypeName("const JPH_SkeletalAnimation *")] JPH_SkeletalAnimation* animation);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletalAnimation_SetIsLooping(JPH_SkeletalAnimation* animation, [NativeTypeName("bool")] NativeBool looping);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletalAnimation_ScaleJoints(JPH_SkeletalAnimation* animation, float scale);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletalAnimation_Sample([NativeTypeName("const JPH_SkeletalAnimation *")] JPH_SkeletalAnimation* animation, float time, JPH_SkeletonPose* pose);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int JPH_SkeletalAnimation_GetAnimatedJointCount([NativeTypeName("const JPH_SkeletalAnimation *")] JPH_SkeletalAnimation* animation);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletalAnimation_AddAnimatedJoint(JPH_SkeletalAnimation* animation, [NativeTypeName("const char *")] sbyte* jointName);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletalAnimation_AddKeyframe(JPH_SkeletalAnimation* animation, int jointIndex, float time, [NativeTypeName("const JPH_Vec3 *")] float3* translation, [NativeTypeName("const JPH_Quat *")] quaternion* rotation);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern JPH_SkeletonMapper* JPH_SkeletonMapper_Create();
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonMapper_Destroy(JPH_SkeletonMapper* mapper);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonMapper_Initialize(JPH_SkeletonMapper* mapper, [NativeTypeName("const JPH_Skeleton *")] JPH_Skeleton* skeleton1, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* neutralPose1, [NativeTypeName("const JPH_Skeleton *")] JPH_Skeleton* skeleton2, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* neutralPose2);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonMapper_LockAllTranslations(JPH_SkeletonMapper* mapper, [NativeTypeName("const JPH_Skeleton *")] JPH_Skeleton* skeleton2, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* neutralPose2);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonMapper_LockTranslations(JPH_SkeletonMapper* mapper, [NativeTypeName("const JPH_Skeleton *")] JPH_Skeleton* skeleton2, [NativeTypeName("const bool *")] NativeBool* lockedTranslations, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* neutralPose2);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonMapper_Map([NativeTypeName("const JPH_SkeletonMapper *")] JPH_SkeletonMapper* mapper, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* pose1ModelSpace, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* pose2LocalSpace, JPH_Mat4* outPose2ModelSpace);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_SkeletonMapper_MapReverse([NativeTypeName("const JPH_SkeletonMapper *")] JPH_SkeletonMapper* mapper, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* pose2ModelSpace, JPH_Mat4* outPose1ModelSpace);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int JPH_SkeletonMapper_GetMappedJointIndex([NativeTypeName("const JPH_SkeletonMapper *")] JPH_SkeletonMapper* mapper, int joint1Index);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_SkeletonMapper_IsJointTranslationLocked([NativeTypeName("const JPH_SkeletonMapper *")] JPH_SkeletonMapper* mapper, int joint2Index);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern JPH_RagdollSettings* JPH_RagdollSettings_Create();
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -4860,7 +4588,7 @@ namespace Jolt
         public static extern NativeBool JPH_RagdollSettings_Stabilize(JPH_RagdollSettings* settings);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_RagdollSettings_DisableParentChildCollisions(JPH_RagdollSettings* settings, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* jointMatrices, float minSeparationDistance);
+        public static extern void JPH_RagdollSettings_DisableParentChildCollisions(JPH_RagdollSettings* settings, [NativeTypeName("const JPH_Matrix4x4 *")] float4x4* jointMatrices, float minSeparationDistance);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_RagdollSettings_CalculateBodyIndexToConstraintIndex(JPH_RagdollSettings* settings);
@@ -4870,33 +4598,6 @@ namespace Jolt
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_RagdollSettings_CalculateConstraintIndexToBodyIdxPair(JPH_RagdollSettings* settings);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_RagdollSettings_ResizeParts(JPH_RagdollSettings* settings, int count);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int JPH_RagdollSettings_GetPartCount([NativeTypeName("const JPH_RagdollSettings *")] JPH_RagdollSettings* settings);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_RagdollSettings_SetPartShape(JPH_RagdollSettings* settings, int partIndex, [NativeTypeName("const JPH_Shape *")] JPH_Shape* shape);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_RagdollSettings_SetPartPosition(JPH_RagdollSettings* settings, int partIndex, [NativeTypeName("const JPH_RVec3 *")] rvec3* position);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_RagdollSettings_SetPartRotation(JPH_RagdollSettings* settings, int partIndex, [NativeTypeName("const JPH_Quat *")] quaternion* rotation);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_RagdollSettings_SetPartMotionType(JPH_RagdollSettings* settings, int partIndex, [NativeTypeName("JPH_MotionType")] MotionType motionType);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_RagdollSettings_SetPartObjectLayer(JPH_RagdollSettings* settings, int partIndex, [NativeTypeName("JPH_ObjectLayer")] ObjectLayer layer);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_RagdollSettings_SetPartMassProperties(JPH_RagdollSettings* settings, int partIndex, float mass);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_RagdollSettings_SetPartToParent(JPH_RagdollSettings* settings, int partIndex, [NativeTypeName("const JPH_SwingTwistConstraintSettings *")] JPH_SwingTwistConstraintSettings* constraintSettings);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern JPH_Ragdoll* JPH_RagdollSettings_CreateRagdoll(JPH_RagdollSettings* settings, JPH_PhysicsSystem* system, [NativeTypeName("JPH_CollisionGroupID")] uint collisionGroup, [NativeTypeName("uint64_t")] ulong userData);
@@ -4919,44 +4620,6 @@ namespace Jolt
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_Ragdoll_ResetWarmStart(JPH_Ragdoll* ragdoll);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Ragdoll_SetPose(JPH_Ragdoll* ragdoll, [NativeTypeName("const JPH_SkeletonPose *")] JPH_SkeletonPose* pose, [NativeTypeName("bool")] NativeBool lockBodies);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Ragdoll_SetPose2(JPH_Ragdoll* ragdoll, [NativeTypeName("const JPH_RVec3 *")] rvec3* rootOffset, [NativeTypeName("const JPH_Mat4 *")] JPH_Mat4* jointMatrices, [NativeTypeName("bool")] NativeBool lockBodies);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Ragdoll_GetPose([NativeTypeName("const JPH_Ragdoll *")] JPH_Ragdoll* ragdoll, JPH_SkeletonPose* outPose, [NativeTypeName("bool")] NativeBool lockBodies);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Ragdoll_GetPose2([NativeTypeName("const JPH_Ragdoll *")] JPH_Ragdoll* ragdoll, [NativeTypeName("JPH_RVec3 *")] rvec3* outRootOffset, JPH_Mat4* outJointMatrices, [NativeTypeName("bool")] NativeBool lockBodies);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Ragdoll_DriveToPoseUsingMotors(JPH_Ragdoll* ragdoll, [NativeTypeName("const JPH_SkeletonPose *")] JPH_SkeletonPose* pose);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Ragdoll_DriveToPoseUsingKinematics(JPH_Ragdoll* ragdoll, [NativeTypeName("const JPH_SkeletonPose *")] JPH_SkeletonPose* pose, float deltaTime, [NativeTypeName("bool")] NativeBool lockBodies);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int JPH_Ragdoll_GetBodyCount([NativeTypeName("const JPH_Ragdoll *")] JPH_Ragdoll* ragdoll);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("JPH_BodyID")]
-        public static extern BodyID JPH_Ragdoll_GetBodyID([NativeTypeName("const JPH_Ragdoll *")] JPH_Ragdoll* ragdoll, int bodyIndex);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int JPH_Ragdoll_GetConstraintCount([NativeTypeName("const JPH_Ragdoll *")] JPH_Ragdoll* ragdoll);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern JPH_TwoBodyConstraint* JPH_Ragdoll_GetConstraint(JPH_Ragdoll* ragdoll, int constraintIndex);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_Ragdoll_GetRootTransform([NativeTypeName("const JPH_Ragdoll *")] JPH_Ragdoll* ragdoll, [NativeTypeName("JPH_RVec3 *")] rvec3* outPosition, [NativeTypeName("JPH_Quat *")] quaternion* outRotation, [NativeTypeName("bool")] NativeBool lockBodies);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("const JPH_RagdollSettings *")]
-        public static extern JPH_RagdollSettings* JPH_Ragdoll_GetRagdollSettings([NativeTypeName("const JPH_Ragdoll *")] JPH_Ragdoll* ragdoll);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_EstimateCollisionResponse([NativeTypeName("const JPH_Body *")] JPH_Body* body1, [NativeTypeName("const JPH_Body *")] JPH_Body* body2, [NativeTypeName("const JPH_ContactManifold *")] JPH_ContactManifold* manifold, float combinedFriction, float combinedRestitution, float minVelocityForRestitution, uint numIterations, JPH_CollisionEstimationResult* result);
@@ -5015,10 +4678,10 @@ namespace Jolt
         public static extern void JPH_VehicleConstraint_GetWheelLocalBasis(JPH_VehicleConstraint* constraint, [NativeTypeName("const JPH_Wheel *")] JPH_Wheel* wheel, [NativeTypeName("JPH_Vec3 *")] float3* outForward, [NativeTypeName("JPH_Vec3 *")] float3* outUp, [NativeTypeName("JPH_Vec3 *")] float3* outRight);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_VehicleConstraint_GetWheelLocalTransform(JPH_VehicleConstraint* constraint, uint wheelIndex, [NativeTypeName("const JPH_Vec3 *")] float3* wheelRight, [NativeTypeName("const JPH_Vec3 *")] float3* wheelUp, JPH_Mat4* result);
+        public static extern void JPH_VehicleConstraint_GetWheelLocalTransform(JPH_VehicleConstraint* constraint, uint wheelIndex, [NativeTypeName("const JPH_Vec3 *")] float3* wheelRight, [NativeTypeName("const JPH_Vec3 *")] float3* wheelUp, [NativeTypeName("JPH_Matrix4x4 *")] float4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_VehicleConstraint_GetWheelWorldTransform(JPH_VehicleConstraint* constraint, uint wheelIndex, [NativeTypeName("const JPH_Vec3 *")] float3* wheelRight, [NativeTypeName("const JPH_Vec3 *")] float3* wheelUp, [NativeTypeName("JPH_RMat4 *")] JPH_Mat4* result);
+        public static extern void JPH_VehicleConstraint_GetWheelWorldTransform(JPH_VehicleConstraint* constraint, uint wheelIndex, [NativeTypeName("const JPH_Vec3 *")] float3* wheelRight, [NativeTypeName("const JPH_Vec3 *")] float3* wheelUp, [NativeTypeName("JPH_RMatrix4x4 *")] rmatrix4x4* result);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern JPH_WheelSettings* JPH_WheelSettings_Create();
@@ -5183,31 +4846,6 @@ namespace Jolt
         public static extern void JPH_VehicleEngineSettings_Init(JPH_VehicleEngineSettings* settings);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_VehicleEngine_ClampRPM(JPH_VehicleEngine* engine);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_VehicleEngine_GetCurrentRPM([NativeTypeName("const JPH_VehicleEngine *")] JPH_VehicleEngine* engine);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_VehicleEngine_SetCurrentRPM(JPH_VehicleEngine* engine, float rpm);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_VehicleEngine_GetAngularVelocity([NativeTypeName("const JPH_VehicleEngine *")] JPH_VehicleEngine* engine);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_VehicleEngine_GetTorque([NativeTypeName("const JPH_VehicleEngine *")] JPH_VehicleEngine* engine, float acceleration);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_VehicleEngine_ApplyTorque(JPH_VehicleEngine* engine, float torque, float deltaTime);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_VehicleEngine_ApplyDamping(JPH_VehicleEngine* engine, float deltaTime);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_VehicleEngine_AllowSleep([NativeTypeName("const JPH_VehicleEngine *")] JPH_VehicleEngine* engine);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_VehicleDifferentialSettings_Init(JPH_VehicleDifferentialSettings* settings);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -5291,29 +4929,6 @@ namespace Jolt
         public static extern void JPH_VehicleTransmissionSettings_SetClutchStrength(JPH_VehicleTransmissionSettings* settings, float value);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_VehicleTransmission_Set(JPH_VehicleTransmission* transmission, int currentGear, float clutchFriction);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_VehicleTransmission_Update(JPH_VehicleTransmission* transmission, float deltaTime, float currentRPM, float forwardInput, [NativeTypeName("bool")] NativeBool canShiftUp);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int JPH_VehicleTransmission_GetCurrentGear([NativeTypeName("const JPH_VehicleTransmission *")] JPH_VehicleTransmission* transmission);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_VehicleTransmission_GetClutchFriction([NativeTypeName("const JPH_VehicleTransmission *")] JPH_VehicleTransmission* transmission);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_VehicleTransmission_IsSwitchingGear([NativeTypeName("const JPH_VehicleTransmission *")] JPH_VehicleTransmission* transmission);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_VehicleTransmission_GetCurrentRatio([NativeTypeName("const JPH_VehicleTransmission *")] JPH_VehicleTransmission* transmission);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("bool")]
-        public static extern NativeBool JPH_VehicleTransmission_AllowSleep([NativeTypeName("const JPH_VehicleTransmission *")] JPH_VehicleTransmission* transmission);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_VehicleCollisionTester_Destroy(JPH_VehicleCollisionTester* tester);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -5359,20 +4974,6 @@ namespace Jolt
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_WheelSettingsWV_SetMaxSteerAngle(JPH_WheelSettingsWV* settings, float value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("const JPH_LinearCurve *")]
-        public static extern JPH_LinearCurve* JPH_WheelSettingsWV_GetLongitudinalFriction([NativeTypeName("const JPH_WheelSettingsWV *")] JPH_WheelSettingsWV* settings);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_WheelSettingsWV_SetLongitudinalFriction(JPH_WheelSettingsWV* settings, [NativeTypeName("const JPH_LinearCurve *")] JPH_LinearCurve* value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("const JPH_LinearCurve *")]
-        public static extern JPH_LinearCurve* JPH_WheelSettingsWV_GetLateralFriction([NativeTypeName("const JPH_WheelSettingsWV *")] JPH_WheelSettingsWV* settings);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_WheelSettingsWV_SetLateralFriction(JPH_WheelSettingsWV* settings, [NativeTypeName("const JPH_LinearCurve *")] JPH_LinearCurve* value);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern float JPH_WheelSettingsWV_GetMaxBrakeTorque([NativeTypeName("const JPH_WheelSettingsWV *")] JPH_WheelSettingsWV* settings);
@@ -5464,45 +5065,6 @@ namespace Jolt
         public static extern float JPH_WheeledVehicleController_GetWheelSpeedAtClutch([NativeTypeName("const JPH_WheeledVehicleController *")] JPH_WheeledVehicleController* controller);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_WheeledVehicleController_SetTireMaxImpulseCallback(JPH_WheeledVehicleController* controller, [NativeTypeName("JPH_TireMaxImpulseCallback")] nint tireMaxImpulseCallback, [NativeTypeName("void*")] nint userData);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("const JPH_VehicleEngine *")]
-        public static extern JPH_VehicleEngine* JPH_WheeledVehicleController_GetEngine([NativeTypeName("const JPH_WheeledVehicleController *")] JPH_WheeledVehicleController* controller);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("const JPH_VehicleTransmission *")]
-        public static extern JPH_VehicleTransmission* JPH_WheeledVehicleController_GetTransmission([NativeTypeName("const JPH_WheeledVehicleController *")] JPH_WheeledVehicleController* controller);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_VehicleTrackSettings_Init(JPH_VehicleTrackSettings* settings);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_VehicleTrack_GetAngularVelocity([NativeTypeName("const JPH_VehicleTrack *")] JPH_VehicleTrack* track);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_VehicleTrack_SetAngularVelocity(JPH_VehicleTrack* track, float velocity);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern uint JPH_VehicleTrack_GetDrivenWheel([NativeTypeName("const JPH_VehicleTrack *")] JPH_VehicleTrack* track);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_VehicleTrack_GetInertia([NativeTypeName("const JPH_VehicleTrack *")] JPH_VehicleTrack* track);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_VehicleTrack_GetAngularDamping([NativeTypeName("const JPH_VehicleTrack *")] JPH_VehicleTrack* track);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_VehicleTrack_GetMaxBrakeTorque([NativeTypeName("const JPH_VehicleTrack *")] JPH_VehicleTrack* track);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_VehicleTrack_GetDifferentialRatio([NativeTypeName("const JPH_VehicleTrack *")] JPH_VehicleTrack* track);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("const JPH_VehicleTrack *")]
-        public static extern JPH_VehicleTrack* JPH_TrackedVehicleController_GetTrack([NativeTypeName("const JPH_TrackedVehicleController *")] JPH_TrackedVehicleController* controller, JPH_TrackSide side);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern JPH_WheelSettingsTV* JPH_WheelSettingsTV_Create();
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -5566,14 +5128,6 @@ namespace Jolt
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_TrackedVehicleController_SetBrakeInput(JPH_TrackedVehicleController* controller, float value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("const JPH_VehicleEngine *")]
-        public static extern JPH_VehicleEngine* JPH_TrackedVehicleController_GetEngine([NativeTypeName("const JPH_TrackedVehicleController *")] JPH_TrackedVehicleController* controller);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("const JPH_VehicleTransmission *")]
-        public static extern JPH_VehicleTransmission* JPH_TrackedVehicleController_GetTransmission([NativeTypeName("const JPH_TrackedVehicleController *")] JPH_TrackedVehicleController* controller);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern JPH_MotorcycleControllerSettings* JPH_MotorcycleControllerSettings_Create();
@@ -5660,41 +5214,5 @@ namespace Jolt
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_MotorcycleController_SetLeanSmoothingFactor(JPH_MotorcycleController* controller, float value);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern JPH_LinearCurve* JPH_LinearCurve_Create();
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_LinearCurve_Destroy(JPH_LinearCurve* curve);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_LinearCurve_Clear(JPH_LinearCurve* curve);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_LinearCurve_Reserve(JPH_LinearCurve* curve, uint numPoints);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_LinearCurve_AddPoint(JPH_LinearCurve* curve, float x, float y);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_LinearCurve_Sort(JPH_LinearCurve* curve);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_LinearCurve_GetMinX([NativeTypeName("const JPH_LinearCurve *")] JPH_LinearCurve* curve);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_LinearCurve_GetMaxX([NativeTypeName("const JPH_LinearCurve *")] JPH_LinearCurve* curve);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern float JPH_LinearCurve_GetValue([NativeTypeName("const JPH_LinearCurve *")] JPH_LinearCurve* curve, float x);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern uint JPH_LinearCurve_GetPointCount([NativeTypeName("const JPH_LinearCurve *")] JPH_LinearCurve* curve);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_LinearCurve_GetPoint([NativeTypeName("const JPH_LinearCurve *")] JPH_LinearCurve* curve, uint index, JPH_Point* result);
-
-        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_LinearCurve_GetPoints([NativeTypeName("const JPH_LinearCurve *")] JPH_LinearCurve* curve, JPH_Point* points, [NativeTypeName(" *")] uint* count);
     }
 }
