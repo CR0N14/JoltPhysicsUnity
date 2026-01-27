@@ -47,6 +47,24 @@ namespace Jolt
     {
     }
 
+    internal partial struct JPH_StateRecorder
+    {
+    }
+
+    internal enum JPH_EStateRecorderState
+    {
+        JPH_EStateRecorderState_None = 0,
+        JPH_EStateRecorderState_Global = 1,
+        JPH_EStateRecorderState_Bodies = 2,
+        JPH_EStateRecorderState_Contacts = 4,
+        JPH_EStateRecorderState_Constraints = 8,
+        JPH_EStateRecorderState_All = JPH_EStateRecorderState_Global | JPH_EStateRecorderState_Bodies | JPH_EStateRecorderState_Contacts | JPH_EStateRecorderState_Constraints,
+    }
+
+    internal partial struct JPH_StateRecorderFilter
+    {
+    }
+
     internal partial struct JPH_ShapeSettings
     {
     }
@@ -1398,6 +1416,21 @@ namespace Jolt
     {
     }
 
+    internal partial struct JPH_StateRecorderFilter_Procs
+    {
+        [NativeTypeName("bool (*)(void *, const JPH_Body *) __attribute__((cdecl))")]
+        public nint ShouldSaveBody;
+
+        [NativeTypeName("bool (*)(void *, const JPH_Constraint *) __attribute__((cdecl))")]
+        public nint ShouldSaveConstraint;
+
+        [NativeTypeName("bool (*)(void *, const JPH_BodyID, const JPH_BodyID) __attribute__((cdecl))")]
+        public nint ShouldSaveContact;
+
+        [NativeTypeName("bool (*)(void *, const JPH_BodyID, const JPH_BodyID) __attribute__((cdecl))")]
+        public nint ShouldRestoreContact;
+    }
+
     internal unsafe partial struct JPH_PhysicsSystemSettings
     {
         public uint maxBodies;
@@ -1952,6 +1985,13 @@ namespace Jolt
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_PhysicsSystem_RemoveStepListener(JPH_PhysicsSystem* system, JPH_PhysicsStepListener* listener);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_PhysicsSystem_SaveState([NativeTypeName("const JPH_PhysicsSystem *")] JPH_PhysicsSystem* system, JPH_StateRecorder* stream, JPH_EStateRecorderState state, [NativeTypeName("const JPH_StateRecorderFilter *")] JPH_StateRecorderFilter* filter);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("bool")]
+        public static extern NativeBool JPH_PhysicsSystem_RestoreState(JPH_PhysicsSystem* system, JPH_StateRecorder* stream, [NativeTypeName("const JPH_StateRecorderFilter *")] JPH_StateRecorderFilter* filter);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_PhysicsSystem_GetBodies([NativeTypeName("const JPH_PhysicsSystem *")] JPH_PhysicsSystem* system, [NativeTypeName("JPH_BodyID *")] BodyID* ids, uint count);

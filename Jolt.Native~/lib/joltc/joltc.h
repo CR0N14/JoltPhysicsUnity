@@ -76,6 +76,17 @@ typedef struct JPH_PhysicsStepListener					JPH_PhysicsStepListener;
 typedef struct JPH_PhysicsSystem						JPH_PhysicsSystem;
 typedef struct JPH_PhysicsMaterial						JPH_PhysicsMaterial;
 
+typedef struct JPH_StateRecorder						JPH_StateRecorder;
+typedef enum JPH_EStateRecorderState {
+	JPH_EStateRecorderState_None = 0,
+	JPH_EStateRecorderState_Global = 1,
+	JPH_EStateRecorderState_Bodies = 2,
+	JPH_EStateRecorderState_Contacts = 4,
+	JPH_EStateRecorderState_Constraints = 8,
+	JPH_EStateRecorderState_All = JPH_EStateRecorderState_Global | JPH_EStateRecorderState_Bodies | JPH_EStateRecorderState_Contacts | JPH_EStateRecorderState_Constraints,
+} JPH_EStateRecorderState;
+typedef struct JPH_StateRecorderFilter					JPH_StateRecorderFilter;
+
 /* ShapeSettings */
 typedef struct JPH_ShapeSettings						JPH_ShapeSettings;
 typedef struct JPH_ConvexShapeSettings					JPH_ConvexShapeSettings;
@@ -1023,6 +1034,31 @@ JPH_CAPI JPH_ObjectVsBroadPhaseLayerFilter* JPH_ObjectVsBroadPhaseLayerFilterTab
 
 JPH_CAPI void JPH_DrawSettings_InitDefault(JPH_DrawSettings* settings);
 
+/* StateRecorderFilter */
+typedef struct JPH_StateRecorderFilter_Procs {
+	bool(JPH_API_CALL* ShouldSaveBody)(void* userData,
+		const JPH_Body* body
+		);
+
+	bool(JPH_API_CALL* ShouldSaveConstraint)(void* userData,
+		const JPH_Constraint* constraint
+		);
+
+	bool(JPH_API_CALL* ShouldSaveContact)(void* userData,
+		const JPH_BodyID body1,
+		const JPH_BodyID body2
+		);
+
+	bool(JPH_API_CALL* ShouldRestoreContact)(void* userData,
+		const JPH_BodyID body1,
+		const JPH_BodyID body2
+		);
+} JPH_StateRecorderFilter_Procs;
+
+JPH_CAPI void JPH_StateRecorderFilter_SetProcs(const JPH_StateRecorderFilter_Procs* procs);
+JPH_CAPI JPH_StateRecorderFilter* JPH_StateRecorderFilter_Create(void* userData);
+JPH_CAPI void JPH_StateRecorderFilter_Destroy(JPH_StateRecorderFilter* listener);
+
 /* JPH_PhysicsSystem */
 typedef struct JPH_PhysicsSystemSettings {
 	uint32_t maxBodies; /* 10240 */
@@ -1106,6 +1142,9 @@ JPH_CAPI void JPH_PhysicsSystem_RemoveConstraints(JPH_PhysicsSystem* system, JPH
 
 JPH_CAPI void JPH_PhysicsSystem_AddStepListener(JPH_PhysicsSystem* system, JPH_PhysicsStepListener* listener);
 JPH_CAPI void JPH_PhysicsSystem_RemoveStepListener(JPH_PhysicsSystem* system, JPH_PhysicsStepListener* listener);
+
+JPH_CAPI void JPH_PhysicsSystem_SaveState(const JPH_PhysicsSystem* system, JPH_StateRecorder* stream, JPH_EStateRecorderState state /* = JPH_EStateRecorderState::JPH_EStateRecorderState_All */, const JPH_StateRecorderFilter* filter /* = nullptr */);
+JPH_CAPI bool JPH_PhysicsSystem_RestoreState(JPH_PhysicsSystem* system, JPH_StateRecorder* stream, const JPH_StateRecorderFilter* filter /* = nullptr */);
 
 JPH_CAPI void JPH_PhysicsSystem_GetBodies(const JPH_PhysicsSystem* system, JPH_BodyID* ids, uint32_t count);
 JPH_CAPI void JPH_PhysicsSystem_GetConstraints(const JPH_PhysicsSystem* system, const JPH_Constraint** constraints, uint32_t count);

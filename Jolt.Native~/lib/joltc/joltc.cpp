@@ -901,6 +901,111 @@ void JPH_DrawSettings_InitDefault(JPH_DrawSettings* settings)
 	settings->drawSoftBodyConstraintColor = JPH_SoftBodyConstraintColor_ConstraintType;
 }
 
+/* State Recorder Filter */
+class ManagedStateRecorderFilter final : public JPH::StateRecorderFilter
+{
+public:
+	static const JPH_StateRecorderFilter_Procs* s_Procs;
+	void* userData = nullptr;
+
+	ManagedStateRecorderFilter(void* userData_)
+		: userData(userData_)
+	{
+
+	}
+
+	bool ShouldSaveBody(const Body& inBody) const override
+	{
+		if (s_Procs != nullptr
+			&& s_Procs->ShouldSaveBody)
+		{
+
+			bool result = s_Procs->ShouldSaveBody(
+				userData,
+				reinterpret_cast<const JPH_Body*>(&inBody)
+			);
+
+			return result;
+		}
+
+		return true;
+	}
+
+	bool ShouldSaveConstraint(const Constraint& inConstraint) const override
+	{
+		if (s_Procs != nullptr
+			&& s_Procs->ShouldSaveConstraint)
+		{
+
+			bool result = s_Procs->ShouldSaveConstraint(
+				userData,
+				reinterpret_cast<const JPH_Constraint*>(&inConstraint)
+			);
+
+			return result;
+		}
+
+		return true;
+	}
+
+	bool ShouldSaveContact(const BodyID& body1, const BodyID& body2) const override
+	{
+		if (s_Procs != nullptr
+			&& s_Procs->ShouldSaveContact)
+		{
+
+			bool result = s_Procs->ShouldSaveContact(
+				userData,
+				(JPH_BodyID)body1.GetIndexAndSequenceNumber(),
+				(JPH_BodyID)body2.GetIndexAndSequenceNumber()
+			);
+
+			return result;
+		}
+
+		return true;
+	}
+
+	bool ShouldRestoreContact(const BodyID& body1, const BodyID& body2) const override
+	{
+		if (s_Procs != nullptr
+			&& s_Procs->ShouldRestoreContact)
+		{
+
+			bool result = s_Procs->ShouldRestoreContact(
+				userData,
+				(JPH_BodyID)body1.GetIndexAndSequenceNumber(),
+				(JPH_BodyID)body2.GetIndexAndSequenceNumber()
+			);
+
+			return result;
+		}
+
+		return true;
+	}
+};
+
+const JPH_StateRecorderFilter_Procs* ManagedStateRecorderFilter::s_Procs = nullptr;
+
+void JPH_StateRecorderFilter_SetProcs(const JPH_StateRecorderFilter_Procs* procs)
+{
+	ManagedStateRecorderFilter::s_Procs = procs;
+}
+
+JPH_StateRecorderFilter* JPH_StateRecorderFilter_Create(void* userData)
+{
+	auto listener = new ManagedStateRecorderFilter(userData);
+	return reinterpret_cast<JPH_StateRecorderFilter*>(listener);
+}
+
+void JPH_StateRecorderFilter_Destroy(JPH_StateRecorderFilter* listener)
+{
+	if (listener)
+	{
+		delete reinterpret_cast<ManagedStateRecorderFilter*>(listener);
+	}
+}
+
 /* JPH_PhysicsSystem */
 struct JPH_PhysicsSystem final
 {
@@ -5143,6 +5248,42 @@ void JPH_PhysicsSystem_RemoveStepListener(JPH_PhysicsSystem* system, JPH_Physics
 	JPH_ASSERT(listener);
 
 	system->physicsSystem->RemoveStepListener(AsPhysicsStepListener(listener));
+}
+
+void JPH_PhysicsSystem_SaveState(
+	const JPH_PhysicsSystem* system,
+	JPH_StateRecorder* stream,
+	JPH_EStateRecorderState state,
+	const JPH_StateRecorderFilter* filter)
+{
+	JPH_ASSERT(system);
+	JPH_ASSERT(stream);
+
+	auto joltStream = reinterpret_cast<JPH::StateRecorder*>(stream);
+	auto joltFilter = reinterpret_cast<const JPH::StateRecorderFilter*>(filter);
+
+	system->physicsSystem->SaveState(
+		*joltStream,
+		static_cast<JPH::EStateRecorderState>(state),
+		filter ? joltFilter : nullptr
+	);
+}
+
+bool JPH_PhysicsSystem_RestoreState(
+	JPH_PhysicsSystem* system,
+	JPH_StateRecorder* stream,
+	const JPH_StateRecorderFilter* filter)
+{
+	JPH_ASSERT(system);
+	JPH_ASSERT(stream);
+
+	auto joltStream = reinterpret_cast<JPH::StateRecorder*>(stream);
+	auto joltFilter = reinterpret_cast<const JPH::StateRecorderFilter*>(filter);
+
+	return system->physicsSystem->RestoreState(
+		*joltStream,
+		filter ? joltFilter : nullptr
+	);
 }
 
 void JPH_PhysicsSystem_GetBodies(const JPH_PhysicsSystem* system, JPH_BodyID* ids, uint32_t count)

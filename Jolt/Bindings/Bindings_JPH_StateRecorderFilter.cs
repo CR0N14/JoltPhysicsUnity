@@ -87,13 +87,13 @@ namespace Jolt
         /// Unsafe static delegate for ShouldSaveContact.
         /// </summary>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-        private delegate bool UnsafeShouldSaveContact(IntPtr udata, SubShapeIDPair* pair);
+        private delegate bool UnsafeShouldSaveContact(IntPtr udata, BodyID body1, BodyID body2);
 
         /// <summary>
         /// Unsafe static delegate for ShouldRestoreContact.
         /// </summary>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-        private delegate bool UnsafeShouldRestoreContact(IntPtr udata, JPH_Body* bodyA, JPH_Body* bodyB);
+        private delegate bool UnsafeShouldRestoreContact(IntPtr udata, BodyID body1, BodyID body2);
 
         /// <summary>
         /// Unsafe static implementation for ShouldSaveBody.
@@ -116,7 +116,7 @@ namespace Jolt
         /// <summary>
         /// Unsafe static implementation for ShouldSaveConstraint.
         /// </summary>
-        [MonoPInvokeCallback(typeof(ShouldSaveConstraint))]
+        [MonoPInvokeCallback(typeof(UnsafeShouldSaveConstraint))]
         private static bool UnsafeShouldSaveConstraintCallback(IntPtr udata, JPH_Constraint* constraint)
         {
             try
@@ -135,7 +135,7 @@ namespace Jolt
         /// Unsafe static implementation for ShouldSaveContact.
         /// </summary>
         [MonoPInvokeCallback(typeof(UnsafeShouldSaveContact))]
-        private static bool UnsafeShouldSaveContactCallback(IntPtr udata, JPH_BodyID* body1, JPH_BodyID* body2)
+        private static bool UnsafeShouldSaveContactCallback(IntPtr udata, BodyID body1, BodyID body2)
         {
             try
             {
@@ -153,7 +153,7 @@ namespace Jolt
         /// Unsafe static implementation for ShouldRestoreContact.
         /// </summary>
         [MonoPInvokeCallback(typeof(UnsafeShouldRestoreContact))]
-        private static bool UnsafeShouldRestoreContactCallback(IntPtr udata, JPH_BodyID* body1, JPH_BodyID* body2) // TODO forward args
+        private static bool UnsafeShouldRestoreContactCallback(IntPtr udata, BodyID body1, BodyID body2) // TODO forward args
         {
             try
             {
