@@ -1486,6 +1486,21 @@ namespace Jolt
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal unsafe delegate void JPH_TireMaxImpulseCallback([NativeTypeName("void*")] nint userData, uint wheelIndex, float* outLongitudinalImpulse, float* outLateralImpulse, float suspensionImpulse, float longitudinalFriction, float lateralFriction, float longitudinalSlip, float lateralSlip, float deltaTime);
 
+    internal partial struct JPH_StateRecorderFilter_Procs
+    {
+        [NativeTypeName("bool (*)(void *, const JPH_Body *) __attribute__((cdecl))")]
+        public nint ShouldSaveBody;
+
+        [NativeTypeName("bool (*)(void *, const JPH_Constraint *) __attribute__((cdecl))")]
+        public nint ShouldSaveConstraint;
+
+        [NativeTypeName("bool (*)(void *, const JPH_BodyID, const JPH_BodyID) __attribute__((cdecl))")]
+        public nint ShouldSaveContact;
+
+        [NativeTypeName("bool (*)(void *, const JPH_BodyID, const JPH_BodyID) __attribute__((cdecl))")]
+        public nint ShouldRestoreContact;
+    }
+
     internal unsafe partial struct JPH_PhysicsSystemSettings
     {
         public uint maxBodies;
@@ -1976,6 +1991,15 @@ namespace Jolt
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_DrawSettings_InitDefault(JPH_DrawSettings* settings);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_StateRecorderFilter_SetProcs([NativeTypeName("const JPH_StateRecorderFilter_Procs *")] JPH_StateRecorderFilter_Procs* procs);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern JPH_StateRecorderFilter* JPH_StateRecorderFilter_Create([NativeTypeName("void*")] nint userData);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_StateRecorderFilter_Destroy(JPH_StateRecorderFilter* listener);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern JPH_PhysicsSystem* JPH_PhysicsSystem_Create([NativeTypeName("const JPH_PhysicsSystemSettings *")] JPH_PhysicsSystemSettings* settings);

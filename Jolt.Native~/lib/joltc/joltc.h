@@ -37,7 +37,7 @@
 
 // JoltPhysicsUnity: override _JPH_EXPORT for zig compatability
 #define JPH_CAPI _JPH_EXTERN __declspec(dllexport)
-#define JPH_CAPI _JPH_EXTERN _JPH_EXPORT
+//#define JPH_CAPI _JPH_EXTERN _JPH_EXPORT
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -1064,6 +1064,31 @@ JPH_CAPI JPH_ObjectVsBroadPhaseLayerFilter* JPH_ObjectVsBroadPhaseLayerFilterTab
 	JPH_ObjectLayerPairFilter* objectLayerPairFilter, uint32_t numObjectLayers);
 
 JPH_CAPI void JPH_DrawSettings_InitDefault(JPH_DrawSettings* settings);
+
+/* StateRecorderFilter */
+typedef struct JPH_StateRecorderFilter_Procs {
+	bool(JPH_API_CALL* ShouldSaveBody)(void* userData,
+		const JPH_Body* body
+		);
+
+	bool(JPH_API_CALL* ShouldSaveConstraint)(void* userData,
+		const JPH_Constraint* constraint
+		);
+
+	bool(JPH_API_CALL* ShouldSaveContact)(void* userData,
+		const JPH_BodyID body1,
+		const JPH_BodyID body2
+		);
+
+	bool(JPH_API_CALL* ShouldRestoreContact)(void* userData,
+		const JPH_BodyID body1,
+		const JPH_BodyID body2
+		);
+} JPH_StateRecorderFilter_Procs;
+
+JPH_CAPI void JPH_StateRecorderFilter_SetProcs(const JPH_StateRecorderFilter_Procs* procs);
+JPH_CAPI JPH_StateRecorderFilter* JPH_StateRecorderFilter_Create(void* userData);
+JPH_CAPI void JPH_StateRecorderFilter_Destroy(JPH_StateRecorderFilter* listener);
 
 /* JPH_PhysicsSystem */
 typedef struct JPH_PhysicsSystemSettings {
