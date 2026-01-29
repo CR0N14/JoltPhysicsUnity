@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace Jolt
 {
     [StructLayout(LayoutKind.Sequential), ExpectedStructSize(typeof(uint))]
-    public struct BodyID : IEquatable<BodyID>
+    public struct BodyID : IEquatable<BodyID>, IComparable<BodyID>
     {
         public uint Value;
 
@@ -22,7 +22,7 @@ namespace Jolt
 
         public override int GetHashCode()
         {
-            return (int) Value;
+            return (int)Value;
         }
 
         public static bool operator ==(BodyID lhs, BodyID rhs)
@@ -35,6 +35,13 @@ namespace Jolt
             return !lhs.Equals(rhs);
         }
 
+        #endregion
+
+        #region IComparable
+        public int CompareTo(BodyID other)
+        {
+            return Value.CompareTo(other.Value);
+        }
         #endregion
     }
 }

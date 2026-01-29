@@ -1035,8 +1035,25 @@ JPH_CAPI JPH_ObjectVsBroadPhaseLayerFilter* JPH_ObjectVsBroadPhaseLayerFilterTab
 JPH_CAPI void JPH_DrawSettings_InitDefault(JPH_DrawSettings* settings);
 
 /* StateRecorder */
+typedef struct JPH_StateRecorder_Procs {
+	void(JPH_API_CALL* ReadBytes)(void* userData,
+		void* outData,
+		size_t inNumBytes
+		);
+
+	bool(JPH_API_CALL* IsEOF)(void* userData);
+
+	bool(JPH_API_CALL* IsFailed)(void* userData);
+
+	void(JPH_API_CALL* WriteBytes)(void* userData,
+		const void* inData,
+		size_t inNumBytes
+		);
+} JPH_StateRecorder_Procs;
+
+JPH_CAPI void JPH_StateRecorder_SetProcs(const JPH_StateRecorder_Procs* procs);
 JPH_CAPI JPH_StateRecorder* JPH_StateRecorder_Create(void* userData);
-JPH_CAPI void JPH_StateRecorder_Destroy(JPH_StateRecorder* recorder);
+JPH_CAPI void JPH_StateRecorder_Destroy(JPH_StateRecorder* listener);
 
 /* StateRecorderFilter */
 typedef struct JPH_StateRecorderFilter_Procs {

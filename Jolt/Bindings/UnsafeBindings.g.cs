@@ -1416,6 +1416,21 @@ namespace Jolt
     {
     }
 
+    internal partial struct JPH_StateRecorder_Procs
+    {
+        [NativeTypeName("void (*)(void *, void *, size_t) __attribute__((cdecl))")]
+        public nint ReadBytes;
+
+        [NativeTypeName("bool (*)(void *) __attribute__((cdecl))")]
+        public nint IsEOF;
+
+        [NativeTypeName("bool (*)(void *) __attribute__((cdecl))")]
+        public nint IsFailed;
+
+        [NativeTypeName("void (*)(void *, const void *, size_t) __attribute__((cdecl))")]
+        public nint WriteBytes;
+    }
+
     internal partial struct JPH_StateRecorderFilter_Procs
     {
         [NativeTypeName("bool (*)(void *, const JPH_Body *) __attribute__((cdecl))")]
@@ -1884,10 +1899,13 @@ namespace Jolt
         public static extern void JPH_DrawSettings_InitDefault(JPH_DrawSettings* settings);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void JPH_StateRecorder_SetProcs([NativeTypeName("const JPH_StateRecorder_Procs *")] JPH_StateRecorder_Procs* procs);
+
+        [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern JPH_StateRecorder* JPH_StateRecorder_Create([NativeTypeName("void*")] nint userData);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void JPH_StateRecorder_Destroy(JPH_StateRecorder* recorder);
+        public static extern void JPH_StateRecorder_Destroy(JPH_StateRecorder* listener);
 
         [DllImport(JOLT_LIB, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void JPH_StateRecorderFilter_SetProcs([NativeTypeName("const JPH_StateRecorderFilter_Procs *")] JPH_StateRecorderFilter_Procs* procs);

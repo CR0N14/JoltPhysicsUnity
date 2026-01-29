@@ -177,6 +177,9 @@ DEF_MAP_DECL(VehicleCollisionTesterCastSphere, JPH_VehicleCollisionTesterCastSph
 DEF_MAP_DECL(VehicleCollisionTesterCastCylinder, JPH_VehicleCollisionTesterCastCylinder)
 DEF_MAP_DECL(VehicleConstraint, JPH_VehicleConstraint)
 
+DEF_MAP_DECL(StateRecorder, JPH_StateRecorder)
+DEF_MAP_DECL(StateRecorderFilter, JPH_StateRecorderFilter)
+
 // Callback for traces, connect this to your own trace function if you have one
 static JPH_TraceFunc s_TraceFunc = nullptr;
 
@@ -901,10 +904,11 @@ void JPH_DrawSettings_InitDefault(JPH_DrawSettings* settings)
 	settings->drawSoftBodyConstraintColor = JPH_SoftBodyConstraintColor_ConstraintType;
 }
 
-/* JPH_StateRecorder */
-class ManagedStateRecorder final : public JPH::BodyFilter
+/* State Recorder */
+class ManagedStateRecorder final : public JPH::StateRecorder
 {
 public:
+	static const JPH_StateRecorder_Procs* s_Procs;
 	void* userData = nullptr;
 
 	ManagedStateRecorder(void* userData_)
@@ -913,40 +917,85 @@ public:
 
 	}
 
-	//bool ShouldCollide(const BodyID& bodyID) const override
-	//{
-	//	if (s_Procs != nullptr
-	//		&& s_Procs->ShouldCollide)
-	//	{
-	//		return s_Procs->ShouldCollide(userData, (JPH_BodyID)bodyID.GetIndexAndSequenceNumber());
-	//	}
+	void ReadBytes(void* outData, size_t inNumBytes) override
+	{
+		if (s_Procs != nullptr
+			&& s_Procs->ReadBytes)
+		{
 
-	//	return true;
-	//}
+			s_Procs->ReadBytes(
+				userData,
+				outData,
+				inNumBytes
+			);
+		}
+	}
 
-	//bool ShouldCollideLocked(const Body& body) const override
-	//{
-	//	if (s_Procs != nullptr
-	//		&& s_Procs->ShouldCollideLocked)
-	//	{
-	//		return s_Procs->ShouldCollideLocked(userData, reinterpret_cast<const JPH_Body*>(&body));
-	//	}
+	bool IsEOF() const override
+	{
+		if (s_Procs != nullptr
+			&& s_Procs->IsEOF)
+		{
 
-	//	return true;
-	//}
+			bool result = s_Procs->IsEOF(
+				userData
+			);
+
+			return result;
+		}
+
+		return false;
+	}
+
+	bool IsFailed() const override
+	{
+		if (s_Procs != nullptr
+			&& s_Procs->IsFailed)
+		{
+
+			bool result = s_Procs->IsFailed(
+				userData
+			);
+
+			return result;
+		}
+
+		return false;
+	}
+
+	void WriteBytes(const void* inData, size_t inNumBytes) override
+	{
+		if (s_Procs != nullptr
+			&& s_Procs->WriteBytes)
+		{
+
+			s_Procs->WriteBytes(
+				userData,
+				inData,
+				inNumBytes
+				);
+		}
+	}
 };
+
+const JPH_StateRecorder_Procs* ManagedStateRecorder::s_Procs = nullptr;
+
+void JPH_StateRecorder_SetProcs(const JPH_StateRecorder_Procs* procs)
+{
+	ManagedStateRecorder::s_Procs = procs;
+}
 
 JPH_StateRecorder* JPH_StateRecorder_Create(void* userData)
 {
-	auto filter = new ManagedStateRecorder(userData);
-	return reinterpret_cast<JPH_StateRecorder*>(filter);
+	auto listener = new ManagedStateRecorder(userData);
+	return reinterpret_cast<JPH_StateRecorder*>(listener);
 }
 
-void JPH_StateRecorder_Destroy(JPH_StateRecorder* filter)
+void JPH_StateRecorder_Destroy(JPH_StateRecorder* listener)
 {
-	if (filter)
+	if (listener)
 	{
-		delete reinterpret_cast<ManagedStateRecorder*>(filter);
+		delete reinterpret_cast<ManagedStateRecorder*>(listener);
 	}
 }
 

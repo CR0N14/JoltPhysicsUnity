@@ -195,7 +195,7 @@ namespace Jolt
             UnsafeBindings.JPH_PhysicsSystem_RemoveConstraint(system, constraint);
         }
 
-        public static void JPH_PhysicsSystem_SaveState(NativeHandle<JPH_PhysicsSystem> system, NativeHandle<JPH_StateRecorder> stream, JPH_EStateRecorderState state, NativeHandle<JPH_StateRecorderFilter> filter)
+        public static void JPH_PhysicsSystem_SaveState(NativeHandle<JPH_PhysicsSystem> system, NativeHandle<JPH_StateRecorder> stream, EStateRecorderState state, NativeHandle<JPH_StateRecorderFilter> filter)
         {
             AssertInitialized();
 

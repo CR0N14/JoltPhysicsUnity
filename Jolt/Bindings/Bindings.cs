@@ -13,6 +13,8 @@ namespace Jolt
         {
             InitializeBodyActivationListeners();
             InitializeContactListeners();
+            InitializeStateRecorders();
+            InitializeStateRecorderFilters();
         }
 
         #if JOLT_DISABLE_SAFETY_CHECKS

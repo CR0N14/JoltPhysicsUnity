@@ -72,7 +72,7 @@ namespace Jolt
         };
 
         /// <summary>
-        /// Unsafe static delegate for OnContactValidate.
+        /// Unsafe static delegate for ShouldSaveBody.
         /// </summary>
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
         private delegate bool UnsafeShouldSaveBody(IntPtr udata, JPH_Body* body);
